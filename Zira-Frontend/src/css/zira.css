@@ -1,0 +1,586 @@
+/* ── Zira Signup ─────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --bg: #0a0d16;
+  --card: rgba(14, 18, 32, 0.92);
+  --border: rgba(99, 102, 241, 0.18);
+  --border-active: rgba(99, 102, 241, 0.55);
+  --indigo: #6366f1;
+  --indigo-light: #818cf8;
+  --cyan: #22d3ee;
+  --text: #f1f5f9;
+  --muted: rgba(241, 245, 249, 0.42);
+  --input-bg: rgba(255, 255, 255, 0.03);
+  --radius: 12px;
+}
+
+/* lock scroll globally */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* exact viewport – no scroll */
+.zira-root {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.orb-1 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.28),
+    transparent 70%
+  );
+  top: -100px;
+  left: -80px;
+}
+.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 211, 238, 0.18),
+    transparent 70%
+  );
+  bottom: -80px;
+  right: -60px;
+}
+.orb-3 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.15),
+    transparent 70%
+  );
+  top: 40%;
+  right: 18%;
+}
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* card */
+.zira-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 390px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 30px 26px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 20px 60px rgba(0, 0, 0, 0.55);
+  animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* logo */
+.zira-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.logo-mark {
+  width: 32px;
+  height: 32px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-text {
+  font-weight: 700;
+  font-size: 17px;
+  background: linear-gradient(120deg, var(--indigo-light), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+/* heading */
+.zira-heading {
+  margin-bottom: 20px;
+}
+.zira-heading h1 {
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--text);
+  letter-spacing: -0.4px;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+.zira-heading p {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* form */
+.zira-form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+/* ── Paste these into your existing zira.css ── */
+
+/* Base field wrapper — glass-style, no harsh white */
+.field-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+  overflow: hidden;
+}
+
+/* Focused state — subtle violet glow */
+.field-wrap:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+/* Input inside the wrap */
+.field-wrap input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px 14px 12px 0;
+  font-size: 14px;
+  color: #f1f5f9;
+  width: 100%;
+  caret-color: #a78bfa;
+}
+
+/* Placeholder text */
+.field-wrap input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Auto-fill override — prevents browser white/yellow background */
+.field-wrap input:-webkit-autofill,
+.field-wrap input:-webkit-autofill:hover,
+.field-wrap input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px rgba(30, 27, 75, 0.95) inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  caret-color: #a78bfa;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Field icon */
+.field-icon {
+  padding: 0 12px;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.field-wrap:focus-within .field-icon {
+  color: #a78bfa;
+}
+
+/* Show/hide password button */
+.toggle-pw {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 12px;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.toggle-pw:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Label above each field */
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Animated underline */
+.field-line {
+  height: 1px;
+  background: linear-gradient(90deg, #a78bfa, #38bdf8);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  border-radius: 1px;
+}
+
+.field-active .field-line {
+  transform: scaleX(1);
+}
+
+/* Error state */
+.field-wrap.has-error {
+  border-color: rgba(248, 113, 113, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12) !important;
+}
+
+/* Shake animation */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-6px);
+  }
+  30% {
+    transform: translateX(6px);
+  }
+  45% {
+    transform: translateX(-5px);
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+  90% {
+    transform: translateX(3px);
+  }
+}
+
+.shake {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Inline error text */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #f87171;
+  animation: fadeSlideIn 0.2s ease both;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Server-level banner */
+.server-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: #f87171;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  animation: fadeSlideIn 0.25s ease both;
+}
+
+/* toggle */
+.toggle-pw {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+.toggle-pw:hover {
+  color: var(--indigo-light);
+}
+
+/* strength */
+.strength-bar {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: -5px;
+}
+.strength-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition:
+    width 0.35s ease,
+    background 0.35s ease;
+}
+
+/* button */
+.zira-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 2px;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  box-shadow: 0 4px 18px rgba(79, 70, 229, 0.38);
+}
+.zira-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #4338ca 0%, #0891b2 100%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.zira-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(79, 70, 229, 0.48);
+}
+.zira-btn:hover::before {
+  opacity: 1;
+}
+.zira-btn:active {
+  transform: translateY(0);
+}
+.zira-btn span,
+.btn-arrow {
+  position: relative;
+  z-index: 1;
+}
+.btn-arrow {
+  transition: transform 0.2s;
+}
+.zira-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* divider */
+.zira-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 13px;
+}
+.zira-divider::before,
+.zira-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.zira-divider span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* social */
+.zira-social {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.15s;
+}
+.social-btn:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.06);
+  transform: translateY(-1px);
+}
+.social-btn:active {
+  transform: translateY(0);
+}
+
+/* login */
+.zira-login {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.zira-login a {
+  color: var(--indigo-light);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.zira-login a:hover {
+  color: var(--cyan);
+}
+
+/* ── Paste these into your existing zira.css ── */
+
+/* Shake animation */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-6px);
+  }
+  30% {
+    transform: translateX(6px);
+  }
+  45% {
+    transform: translateX(-5px);
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+  90% {
+    transform: translateX(3px);
+  }
+}
+
+.shake {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Error border + glow on the field-wrap */
+.field-wrap.has-error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+/* Inline error message below each field */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #f87171;
+  animation: fadeSlideIn 0.2s ease both;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Server-level error banner (above the form) */
+.server-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #f87171;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  animation: fadeSlideIn 0.25s ease both;
+}

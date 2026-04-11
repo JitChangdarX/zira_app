@@ -1,0 +1,21 @@
+# backend
+node_modules/
+.env
+
+# frontend
+Zira-Frontend/node_modules/
+Zira-Frontend/.env
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# system
+.DS_Store
+Thumbs.db
+
+# build
+dist/
+build/
+

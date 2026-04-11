@@ -1,0 +1,306 @@
+/* ── Zira Organization Alert ─────────────────────────── */
+
+@keyframes za-slide-up {
+  from { opacity: 0; transform: translateY(32px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes za-fade-out {
+  from { opacity: 1; transform: translateY(0)  scale(1);    }
+  to   { opacity: 0; transform: translateY(16px) scale(0.95); }
+}
+
+@keyframes za-shake {
+  0%,100% { transform: translateX(0); }
+  15%     { transform: translateX(-8px); }
+  30%     { transform: translateX(8px); }
+  45%     { transform: translateX(-6px); }
+  60%     { transform: translateX(6px); }
+  75%     { transform: translateX(-3px); }
+  90%     { transform: translateX(3px); }
+}
+
+@keyframes za-ring {
+  0%   { transform: rotate(0deg)    scale(1);    }
+  10%  { transform: rotate(-18deg)  scale(1.15); }
+  25%  { transform: rotate(20deg)   scale(1.2);  }
+  40%  { transform: rotate(-14deg)  scale(1.1);  }
+  55%  { transform: rotate(12deg)   scale(1.05); }
+  70%  { transform: rotate(-6deg)   scale(1);    }
+  85%  { transform: rotate(4deg)    scale(1);    }
+  100% { transform: rotate(0deg)    scale(1);    }
+}
+
+@keyframes za-tick {
+  from { stroke-dashoffset: 28; }
+  to   { stroke-dashoffset: 0;  }
+}
+
+@keyframes za-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes za-dot-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1.1); opacity: 1;   }
+}
+
+/* ── Backdrop ──────────────────────────────────────────── */
+.za-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 8, 25, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1rem;
+}
+
+/* ── Card ──────────────────────────────────────────────── */
+.za-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #0f0e1a;
+  border: 1px solid rgba(130, 110, 255, 0.28);
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  overflow: hidden;
+  animation: za-slide-up 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow:
+    0 0 0 1px rgba(130, 110, 255, 0.12),
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.za-card.za-leaving {
+  animation: za-fade-out 0.35s ease-in forwards;
+}
+
+/* ── Subtle top glow stripe ────────────────────────────── */
+.za-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(130,110,255,0.6), transparent);
+}
+
+/* ── Corner sparkles ───────────────────────────────────── */
+.za-sparkle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.18;
+}
+.za-sparkle-1 { width: 180px; height: 180px; top: -60px; right: -50px; background: radial-gradient(circle, #826eff 0%, transparent 70%); }
+.za-sparkle-2 { width: 140px; height: 140px; bottom: -40px; left: -40px; background: radial-gradient(circle, #5de0b3 0%, transparent 70%); }
+
+/* ── Icon ring ─────────────────────────────────────────── */
+.za-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+}
+
+.za-icon-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(93, 224, 179, 0.35);
+  background: rgba(93, 224, 179, 0.08);
+}
+
+.za-icon-bell {
+  position: relative;
+  z-index: 1;
+  animation: za-ring 0.9s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0.35s both;
+  transform-origin: center top;
+}
+
+.za-icon-bell svg {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 8px rgba(93,224,179,0.6));
+}
+
+/* ── Tick mark inside small circle ────────────────────── */
+.za-tick-circle {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 26px; height: 26px;
+  background: #1dba84;
+  border-radius: 50%;
+  border: 2px solid #0f0e1a;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+
+.za-tick-circle svg {
+  width: 13px; height: 13px;
+}
+
+.za-tick-path {
+  stroke-dasharray: 28;
+  stroke-dashoffset: 28;
+  animation: za-tick 0.4s ease-out 0.6s forwards;
+}
+
+/* ── Text content ──────────────────────────────────────── */
+.za-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5de0b3;
+  margin: 0 0 0.5rem;
+}
+
+.za-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.za-title span {
+  background: linear-gradient(90deg, #826eff, #5de0b3, #826eff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: za-shimmer 2.4s linear 0.6s infinite;
+}
+
+.za-subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.48);
+  margin: 0 0 1.75rem;
+  line-height: 1.6;
+}
+
+/* ── Detail pills ──────────────────────────────────────── */
+.za-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+}
+
+.za-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+}
+
+.za-pill-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #5de0b3;
+  flex-shrink: 0;
+}
+
+/* ── Separator ─────────────────────────────────────────── */
+.za-sep {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 0 0 1.5rem;
+}
+
+/* ── Progress bar ──────────────────────────────────────── */
+.za-progress-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  text-align: left;
+  margin-bottom: 6px;
+}
+
+.za-progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1.75rem;
+}
+
+.za-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #826eff, #5de0b3);
+  border-radius: 4px;
+  transition: width 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ── Action buttons ────────────────────────────────────── */
+.za-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.za-btn {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.za-btn:active { transform: scale(0.97); }
+
+.za-btn-primary {
+  background: linear-gradient(135deg, #826eff, #5de0b3);
+  color: #0f0e1a;
+}
+
+.za-btn-primary:hover { opacity: 0.88; }
+
+.za-btn-ghost {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+}
+
+.za-btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Shake modifier (for error use) ────────────────────── */
+.za-card.za-shake {
+  animation: za-shake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* ── Loading dots (for pending state) ──────────────────── */
+.za-dots {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.za-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #826eff;
+  animation: za-dot-bounce 1.2s ease-in-out infinite;
+}
+
+.za-dot:nth-child(2) { animation-delay: 0.2s; }
+.za-dot:nth-child(3) { animation-delay: 0.4s; }
