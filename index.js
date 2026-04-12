@@ -13,28 +13,23 @@ const app = express();
 dotenv.config();
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        process.env.CLIENT_URL,
-      ].filter(Boolean);
-
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(null, false);
-    },
-    credentials: true,
-  }),
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      process.env.CLIENT_URL,
+    ].filter(Boolean);
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(null, false);
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(cookieParser());
 await connectDB();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const saltRounds = 10;
 const secret = process.env.SECRET_KEY;
 
@@ -104,8 +99,8 @@ app.post("/signup-post-user", async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
@@ -233,7 +228,7 @@ app.post("/api/v1/organizations", async (req, res) => {
       return res.status(401).json({ message: "Invalid token" });
     }
 
-    const user = await owner.findOne({ uuid: verify_id.id });
+    const user = await Owner.findOne({ uuid: verify_id.id });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
