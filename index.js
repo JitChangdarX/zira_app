@@ -9,28 +9,29 @@ import { sendInviteMail } from "./mail.js";
 import Organization from "./models/organization.js";
 import dotenv from "dotenv";
 import jwt, { decode } from "jsonwebtoken";
-import owner from "./models/owner.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
 
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      "http://localhost:5173",
-      process.env.CLIENT_URL,
-    ].filter(Boolean);
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        process.env.CLIENT_URL,
+      ].filter(Boolean);
 
-    if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-    return callback(null, false);
-  },
-  credentials: true,
-}));
+      return callback(null, false);
+    },
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 await connectDB();
 const PORT = 5000;
@@ -171,37 +172,45 @@ app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
 
 app.post("/refresh-token", async (req, res) => {
   console.log("REFRESH HIT");
-  res.json({ ok: true });
-  const token = req.cookies.refreshToken;
-  if (!token) {
-    return res.status(401).json({ message: "No refresh token" });
+  try {
+    const token = req.cookies.refreshToken;
+
+    if (!token) {
+      return res.status(401).json({ message: "No refresh token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await Owner.findOne({ uuid: decoded.id });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newAccessToken = jwt.sign({ id: user.uuid }, secret, {
+      expiresIn: "15m",
+    });
+
+    const newRefreshToken = jwt.sign(
+      { id: user.uuid },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "28d" },
+    );
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 28 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      X_AUTH: newAccessToken,
+    });
+  } catch (error) {
+    console.log("REFRESH ERROR:", error);
+    return res.status(500).json({ message: "Server error" });
   }
-
-  const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-  const user = await Owner.findOne({ uuid: decoded.id });
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  const newAccessToken = jwt.sign({ id: user.uuid }, secret, {
-    expiresIn: "15m",
-  });
-
-  const newRefreshToken = jwt.sign(
-    { id: user.uuid },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "28d" },
-  );
-
-  res.cookie("refreshToken", newRefreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 28 * 24 * 60 * 60 * 1000,
-  });
-  return res.status(200).json({
-    X_AUTH: newAccessToken,
-  });
 });
 
 app.post("/api/v1/organizations", async (req, res) => {
@@ -295,7 +304,7 @@ app.post("/api/send-invite", async (req, res) => {
     });
   }
 
-  const inviteLink = `http://localhost:5173/invite/${find_org_id._id}`;
+  const inviteLink = `${process.env.CLIENT_URL}/invite/${find_org_id._id}`;
   await sendInviteMail(email, find_org_id.organizationname, inviteLink);
 
   return res.status(200).json({
