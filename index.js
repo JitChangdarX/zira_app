@@ -12,34 +12,25 @@ import jwt, { decode } from "jsonwebtoken";
 import owner from "./models/owner.js";
 const app = express();
 dotenv.config();
-/* ----------------- DEBUG MIDDLEWARE FIRST ----------------- */
-app.use((req, res, next) => {
-  console.log("🔥 HIT:", req.method, req.url);
-  next();
-});
-
 app.use(express.json());
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        process.env.CLIENT_URL,
-      ].filter(Boolean);
 
-      if (!origin) return callback(null, true);
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      process.env.CLIENT_URL,
+    ].filter(Boolean);
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+    if (!origin) return callback(null, true);
 
-      return callback(null, false);
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
+  credentials: true,
+}));
 app.use(cookieParser());
 await connectDB();
 const PORT = 5000;
@@ -187,7 +178,6 @@ app.post("/refresh-token", async (req, res) => {
   }
 
   const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-
   const user = await Owner.findOne({ uuid: decoded.id });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
