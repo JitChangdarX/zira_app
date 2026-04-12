@@ -12,17 +12,25 @@ dotenv.config();
 import jwt, { decode } from "jsonwebtoken";
 import owner from "./models/owner.js";
 const app = express();
+
+
 app.use(express.json());
 app.use(
   cors({
     origin: function (origin, callback) {
       const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
 
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      // allow tools like Postman or server-to-server
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      console.log("Blocked CORS origin:", origin);
+
+      // ❌ DO NOT throw error — just block safely
+      return callback(null, false);
     },
     credentials: true,
   }),
@@ -32,6 +40,8 @@ await connectDB();
 const PORT = 5000;
 const saltRounds = 10;
 const secret = process.env.SECRET_KEY;
+
+
 
 const verifyToken = (req, res, next) => {
   const token = req.headers["x-auth"];
