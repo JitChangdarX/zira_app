@@ -22,22 +22,23 @@ app.use(express.json());
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
+      const allowedOrigins = [
+        "http://localhost:5173",
+        process.env.CLIENT_URL,
+      ].filter(Boolean);
 
-      // allow tools like Postman or server-to-server
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      console.log("Blocked CORS origin:", origin);
-
-      // ❌ DO NOT throw error — just block safely
       return callback(null, false);
     },
     credentials: true,
-  }),
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
 app.use(cookieParser());
 await connectDB();
