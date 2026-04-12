@@ -178,6 +178,8 @@ app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
 });
 
 app.post("/refresh-token", async (req, res) => {
+  console.log("REFRESH HIT");
+  res.json({ ok: true });
   const token = req.cookies.refreshToken;
   if (!token) {
     return res.status(401).json({ message: "No refresh token" });
