@@ -94,8 +94,8 @@ app.post("/signup-post-user", async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // 🔥 important
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
@@ -161,7 +161,6 @@ app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
 });
 
 app.post("/refresh-token", async (req, res) => {
- 
   try {
     const token = req.cookies.refreshToken;
     if (!token) {
@@ -189,6 +188,13 @@ app.post("/refresh-token", async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // 🔥 important
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 28 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
