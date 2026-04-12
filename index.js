@@ -94,8 +94,8 @@ app.post("/signup-post-user", async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production", // 🔥 important
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
@@ -161,10 +161,9 @@ app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
 });
 
 app.post("/refresh-token", async (req, res) => {
-  console.log("REFRESH HIT");
+ 
   try {
     const token = req.cookies.refreshToken;
-
     if (!token) {
       return res.status(401).json({ message: "No refresh token" });
     }
@@ -186,11 +185,10 @@ app.post("/refresh-token", async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "28d" },
     );
-
-      res.cookie("refreshToken", newRefreshToken, {
+    res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // 🔥 important
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
