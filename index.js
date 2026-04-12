@@ -8,18 +8,26 @@ import cookieParser from "cookie-parser";
 import { sendInviteMail } from "./mail.js";
 import Organization from "./models/organization.js";
 import dotenv from "dotenv";
+dotenv.config();
 import jwt, { decode } from "jsonwebtoken";
 import owner from "./models/owner.js";
 const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+    origin: function (origin, callback) {
+      const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
 app.use(cookieParser());
-dotenv.config();
 await connectDB();
 const PORT = 5000;
 const saltRounds = 10;
