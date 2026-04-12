@@ -45,6 +45,11 @@ const PORT = 5000;
 const saltRounds = 10;
 const secret = process.env.SECRET_KEY;
 
+app.get("/test", (req, res) => {
+  console.log("TEST HIT");
+  res.json({ ok: true });
+});
+
 const verifyToken = (req, res, next) => {
   const token = req.headers["x-auth"];
   if (!token) {
