@@ -8,11 +8,15 @@ import cookieParser from "cookie-parser";
 import { sendInviteMail } from "./mail.js";
 import Organization from "./models/organization.js";
 import dotenv from "dotenv";
-dotenv.config();
 import jwt, { decode } from "jsonwebtoken";
 import owner from "./models/owner.js";
 const app = express();
-
+dotenv.config();
+/* ----------------- DEBUG MIDDLEWARE FIRST ----------------- */
+app.use((req, res, next) => {
+  console.log("🔥 HIT:", req.method, req.url);
+  next();
+});
 
 app.use(express.json());
 app.use(
@@ -40,8 +44,6 @@ await connectDB();
 const PORT = 5000;
 const saltRounds = 10;
 const secret = process.env.SECRET_KEY;
-
-
 
 const verifyToken = (req, res, next) => {
   const token = req.headers["x-auth"];
