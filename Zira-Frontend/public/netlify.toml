@@ -1,5 +1,5 @@
-[[redirects]]
-  from = "/api/*"
-  to = "https://zira-app.onrender.com/:splat"
-  status = 200
-  force = true
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://jitchangdarzira-cloud.netlify.app"
+    Access-Control-Allow-Credentials = "true"
