@@ -168,9 +168,7 @@ app.post("/refresh-token", async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-
     const user = await Owner.findOne({ uuid: decoded.id });
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -185,13 +183,6 @@ app.post("/refresh-token", async (req, res) => {
       { expiresIn: "28d" },
     );
     res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // 🔥 important
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 28 * 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
