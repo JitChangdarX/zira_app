@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiurl from "../../../utils/apiurl";
 
-export default function ProtectedRoute({ children }) {
+export const ProtectedRoute = ({ children }) => {
   const [isAuth, setIsAuth] = useState(null);
 
   const token = localStorage.getItem("AUTH-X");
@@ -58,4 +58,4 @@ export default function ProtectedRoute({ children }) {
   }
 
   return children;
-}
+};

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import apiurl from "../../../utils/apiurl";
 
-export const PublicRoute = ({ children }) => {
+export default function PublicRoute({ children }) {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -26,7 +26,6 @@ export const PublicRoute = ({ children }) => {
           }
         }
 
-
         const refreshRes = await fetch(apiurl.refresh_token, {
           method: "POST",
           credentials: "include",
@@ -39,9 +38,9 @@ export const PublicRoute = ({ children }) => {
         }
 
         const data = await refreshRes.json();
-
         localStorage.setItem("AUTH-X", data.X_AUTH);
         setStatus("auth");
+
       } catch (err) {
         localStorage.removeItem("AUTH-X");
         setStatus("guest");
@@ -51,9 +50,9 @@ export const PublicRoute = ({ children }) => {
     checkAuth();
   }, []);
 
-
+  // ✅ removed loader
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return null;
   }
 
   if (status === "auth") {
@@ -61,4 +60,4 @@ export const PublicRoute = ({ children }) => {
   }
 
   return children;
-};
+}

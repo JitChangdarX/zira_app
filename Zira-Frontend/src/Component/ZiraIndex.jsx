@@ -308,6 +308,9 @@ export default function ZiraIndex() {
         </div>
       </section>
 
+
+      {/* this part any mobile and laptop this part now css problem */}
+
       {/* ── ANIMATED STATS STRIP ──────────────────────────── */}
       <section className="z13-statsstrip">
         <div className="z13-statsstrip-inner">

@@ -82,23 +82,7 @@ app.post("/signup-post-user", async (req, res) => {
     });
     await newUser.save();
 
-    const token = jwt.sign({ id: newUser.uuid }, secret, { expiresIn: "15m" });
-
-    const refreshToken = jwt.sign(
-      { id: newUser.uuid },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "28d",
-      },
-    );
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 28 * 24 * 60 * 60 * 1000,
-    });
-
+    const token = jwt.sign({ id: newUser.uuid }, secret, { expiresIn: "28d" });
     res.status(201).json({
       _k: newUser.uuid,
       X_AUTH: token,
@@ -295,6 +279,25 @@ app.post("/api/send-invite", async (req, res) => {
   return res.status(200).json({
     message: "Invite sent successfully",
   });
+});
+
+app.post("/logout_user", (req, res) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Logout failed",
+    });
+  }
 });
 
 app.listen(PORT, () => {

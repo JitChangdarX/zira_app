@@ -5,7 +5,7 @@ import apiurl from "../../utils/apiurl";
 import AlertBanner from "./AlertMessage/AlertBanner";
 import axios from "axios";
 
-export function Organization({ user, onCreate }) {
+export default function Organization({ user, onCreate }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [orgName, setOrgName] = useState("");
   const [orgUrl, setOrgUrl] = useState("");
@@ -57,10 +57,8 @@ export function Organization({ user, onCreate }) {
 
         const refreshData = await refreshRes.json();
 
-        
         localStorage.setItem("AUTH-X", refreshData.X_AUTH);
 
-      
         const retryRes = await fetch(apiurl.user_fetch_api, {
           method: "POST",
           headers: {
