@@ -169,7 +169,7 @@ function Header({ darkMode, setDarkMode }) {
               </svg>
             )}
           </button>
-          <a href="/signin" className="z13-signin">Sign in</a>
+
           <a href="/signup" className="z13-header-cta">Start for free</a>
           <button className="z13-hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             <span /><span /><span />

@@ -9,6 +9,11 @@ export default function PublicRoute({ children }) {
     const checkAuth = async () => {
       const token = localStorage.getItem("AUTH-X");
 
+      if (!token) {
+        setStatus("guest");
+        return;
+      }
+
       try {
         if (token) {
           const res = await fetch(apiurl.user_fetch_api, {
@@ -23,24 +28,11 @@ export default function PublicRoute({ children }) {
           if (res.ok) {
             setStatus("auth");
             return;
+          } else {
+            localStorage.removeItem("AUTH-X");
+            setStatus("guest");
           }
         }
-
-        const refreshRes = await fetch(apiurl.refresh_token, {
-          method: "POST",
-          credentials: "include",
-        });
-
-        if (!refreshRes.ok) {
-          localStorage.removeItem("AUTH-X");
-          setStatus("guest");
-          return;
-        }
-
-        const data = await refreshRes.json();
-        localStorage.setItem("AUTH-X", data.X_AUTH);
-        setStatus("auth");
-
       } catch (err) {
         localStorage.removeItem("AUTH-X");
         setStatus("guest");

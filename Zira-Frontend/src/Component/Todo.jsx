@@ -18,10 +18,11 @@ import {
   PolarGrid,
   PolarAngleAxis,
 } from "recharts";
-
-import api from "../../utils/apiurl";
 import "../css/todo.css";
 import axios from "axios";
+import api from "../../utils/apiurl";
+import UnderConstructionToast from "./UnderConstruction/UnderConstructionToast";
+
 const INITIAL_TASKS = {
   todo: [
     {
@@ -460,75 +461,6 @@ const DAYS = [
   "Apr 14",
 ];
 
-const OWNER_ANALYTICS = {
-  revenue: [
-    { month: "Jan", value: 42000 },
-    { month: "Feb", value: 38000 },
-    { month: "Mar", value: 55000 },
-    { month: "Apr", value: 61000 },
-    { month: "May", value: 58000 },
-    { month: "Jun", value: 72000 },
-  ],
-  projectHealth: [
-    {
-      name: "Phoenix App",
-      health: 92,
-      budget: 85000,
-      spent: 71000,
-      risk: "low",
-    },
-    {
-      name: "Orion API",
-      health: 78,
-      budget: 45000,
-      spent: 39000,
-      risk: "medium",
-    },
-    { name: "Nova UI", health: 95, budget: 60000, spent: 48000, risk: "low" },
-    {
-      name: "Atlas Backend",
-      health: 64,
-      budget: 30000,
-      spent: 28500,
-      risk: "high",
-    },
-  ],
-  teamStats: [
-    {
-      name: "Mark Kumar",
-      role: "Lead Eng",
-      tasks: 8,
-      done: 12,
-      efficiency: 94,
-      cost: "$9,800",
-    },
-    {
-      name: "Sarah Reeves",
-      role: "Frontend Dev",
-      tasks: 6,
-      done: 9,
-      efficiency: 88,
-      cost: "$7,200",
-    },
-    {
-      name: "Jake Park",
-      role: "DevOps Eng",
-      tasks: 4,
-      done: 6,
-      efficiency: 82,
-      cost: "$8,100",
-    },
-    {
-      name: "Alisha Mehta",
-      role: "QA Engineer",
-      tasks: 5,
-      done: 7,
-      efficiency: 90,
-      cost: "$6,500",
-    },
-  ],
-};
-
 const tagColor = (t) => {
   if (["bug", "blocker"].includes(t)) return "tag-red";
   if (["backend", "api"].includes(t)) return "tag-blue";
@@ -675,7 +607,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
         onClick={() => setOpen(!open)}
         isOpen={open}
       />
-
       {open && (
         <div className="user-dropdown">
           <div className="ud-header">
@@ -701,7 +632,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
               </div>
             </div>
           </div>
-
           <div className="ud-stats">
             <div className="ud-stat">
               <div className="ud-stat-val">{user.taskCount}</div>
@@ -716,7 +646,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
               <div className="ud-stat-key">Streak</div>
             </div>
           </div>
-
           <div className="ud-tabs">
             {["profile", "settings", "team"].map((t) => (
               <button
@@ -728,58 +657,29 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
               </button>
             ))}
           </div>
-
           {tab === "profile" && (
             <div className="ud-body">
-              <div className="ud-meta-row">
-                <span className="ud-meta-key">Member since</span>
-                <span className="ud-meta-val">{user.joinDate}</span>
-              </div>
-              <div className="ud-meta-row">
-                <span className="ud-meta-key">Last active</span>
-                <span className="ud-meta-val green">{user.lastActive}</span>
-              </div>
-              <div className="ud-meta-row">
-                <span className="ud-meta-key">Organization</span>
-                <span className="ud-meta-val">{user.orgName}</span>
-              </div>
-              <div className="ud-meta-row">
-                <span className="ud-meta-key">Plan</span>
-                <span className="ud-meta-val">{user.plan}</span>
-              </div>
+              {[
+                ["Member since", user.joinDate, ""],
+                ["Last active", user.lastActive, "green"],
+                ["Organization", user.orgName, ""],
+                ["Plan", user.plan, ""],
+              ].map(([k, v, cls]) => (
+                <div key={k} className="ud-meta-row">
+                  <span className="ud-meta-key">{k}</span>
+                  <span className={`ud-meta-val ${cls}`}>{v}</span>
+                </div>
+              ))}
               <div className="ud-links">
                 <a href="#" className="ud-link">
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                  </svg>
                   View profile
                 </a>
                 <a href="#" className="ud-link">
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4l3 3" />
-                  </svg>
                   Activity log
                 </a>
               </div>
             </div>
           )}
-
           {tab === "settings" && (
             <div className="ud-body">
               <div className="ud-setting-row">
@@ -805,32 +705,8 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
                   <div className="ud-toggle-thumb" />
                 </button>
               </div>
-              <div className="ud-setting-row">
-                <div>
-                  <div className="ud-setting-label">Keyboard shortcuts</div>
-                  <div className="ud-setting-sub">Press K to create task</div>
-                </div>
-                <button className="ud-toggle on">
-                  <div className="ud-toggle-thumb" />
-                </button>
-              </div>
-              <a href="#" className="ud-link" style={{ marginTop: 8 }}>
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                Account settings
-              </a>
             </div>
           )}
-
           {tab === "team" && (
             <div className="ud-body">
               {[
@@ -847,13 +723,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
                   name: "Jake Park",
                   role: "DevOps Eng",
                   online: true,
-                },
-                {
-                  av: "AM",
-                  color: "#f59e0b",
-                  name: "Alisha Mehta",
-                  role: "QA Engineer",
-                  online: false,
                 },
               ].map((m) => (
                 <div key={m.av} className="ud-team-row">
@@ -877,7 +746,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
               ))}
             </div>
           )}
-
           <div className="ud-footer">
             <button
               className="ud-logout-btn"
@@ -893,8 +761,6 @@ function UserMenu({ darkMode, setDarkMode, onLogout }) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
               >
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                 <polyline points="16 17 21 12 16 7" />
@@ -917,7 +783,7 @@ function NotifPanel({ open, onClose, notifications, onMarkRead }) {
       <div className={`notif-panel ${open ? "open" : ""}`}>
         <div className="notif-panel-head">
           <div className="notif-panel-title">
-            Notifications
+            Notifications{" "}
             {unreadCount > 0 && (
               <span className="notif-count">{unreadCount}</span>
             )}
@@ -973,7 +839,6 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
       time: "1h ago",
     },
   ]);
-
   const addComment = () => {
     if (!comment.trim()) return;
     setComments([
@@ -982,13 +847,11 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
     ]);
     setComment("");
   };
-
   const getStatus = () => {
     if (tasks.todo.find((t) => t.id === task.id)) return "todo";
     if (tasks.inprog.find((t) => t.id === task.id)) return "inprog";
     return "done";
   };
-
   const status = getStatus();
   const statusColors = { todo: "#60a5fa", inprog: "#fbbf24", done: "#4ade80" };
 
@@ -1005,7 +868,6 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
             ✕
           </button>
         </div>
-
         <div className="tdp-body">
           <div className="tdp-row">
             <div className="tdp-field">
@@ -1056,7 +918,6 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
               </span>
             </div>
           </div>
-
           <div className="tdp-section">
             <div className="tdp-section-title">Progress — {task.progress}%</div>
             <div className="tdp-progress-bar">
@@ -1066,14 +927,12 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
               />
             </div>
           </div>
-
           <div className="tdp-section">
             <div className="tdp-section-title">Description</div>
             <div className="tdp-desc">
               {task.desc || "No description provided."}
             </div>
           </div>
-
           <div className="tdp-section">
             <div className="tdp-section-title">Tags</div>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -1084,7 +943,6 @@ function TaskDetailPanel({ task, onClose, onStatusChange, tasks }) {
               ))}
             </div>
           </div>
-
           <div className="tdp-section">
             <div className="tdp-section-title">
               Comments ({comments.length})
@@ -1142,7 +1000,6 @@ function SprintHealth({ tasks }) {
   const total = tasks.todo.length + tasks.inprog.length + tasks.done.length;
   const done = tasks.done.length;
   const pct = total ? Math.round((done / total) * 100) : 0;
-  const daysLeft = 3;
   return (
     <div className="sprint-health">
       <div className="sh-left">
@@ -1151,15 +1008,13 @@ function SprintHealth({ tasks }) {
           <div className="sh-fill" style={{ width: `${pct}%` }} />
         </div>
         <div className="sh-meta">
-          {done}/{total} tasks · {daysLeft} days left · {pct}% complete
+          {done}/{total} tasks · 3 days left · {pct}% complete
         </div>
       </div>
-      <div className="sh-right">
-        <div
-          className={`sh-status ${pct >= 70 ? "good" : pct >= 40 ? "warn" : "risk"}`}
-        >
-          {pct >= 70 ? "On Track" : pct >= 40 ? "At Risk" : "Behind"}
-        </div>
+      <div
+        className={`sh-status ${pct >= 70 ? "good" : pct >= 40 ? "warn" : "risk"}`}
+      >
+        {pct >= 70 ? "On Track" : pct >= 40 ? "At Risk" : "Behind"}
       </div>
     </div>
   );
@@ -1169,12 +1024,11 @@ function TimelineView() {
   const statusColors = { todo: "#3b82f6", inprog: "#f59e0b", done: "#22c55e" };
   const statusLabels = { todo: "To Do", inprog: "In Progress", done: "Done" };
   const today = 10;
-
   return (
     <div className="timeline-view fade-up">
       <div className="section-header" style={{ marginBottom: 16 }}>
         <div className="section-label">Timeline — Sprint 14</div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {Object.entries(statusLabels).map(([k, v]) => (
             <div
               key={k}
@@ -1199,7 +1053,6 @@ function TimelineView() {
           ))}
         </div>
       </div>
-
       <div className="tl-grid">
         <div className="tl-label-col" />
         <div className="tl-days">
@@ -1214,7 +1067,6 @@ function TimelineView() {
           ))}
         </div>
       </div>
-
       {TIMELINE_ITEMS.map((item) => (
         <div key={item.id} className="tl-row">
           <div className="tl-label-col">
@@ -1225,8 +1077,8 @@ function TimelineView() {
             {DAYS.map((_, i) => {
               const day = i + 1;
               const inRange = day >= item.start && day <= item.end;
-              const isStart = day === item.start;
-              const isEnd = day === item.end;
+              const isStart = day === item.start,
+                isEnd = day === item.end;
               return (
                 <div key={i} className="tl-cell">
                   {inRange && (
@@ -1260,14 +1112,13 @@ function ReportsPage({ tasks }) {
   const total = tasks.todo.length + tasks.inprog.length + tasks.done.length;
   const doneCount = tasks.done.length;
   const completion = total ? Math.round((doneCount / total) * 100) : 0;
-
   return (
     <div className="fade-up">
       <div className="section-header" style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div>
           <div
             style={{
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: 800,
               letterSpacing: "-0.8px",
               color: "var(--text)",
@@ -1275,27 +1126,14 @@ function ReportsPage({ tasks }) {
           >
             Reports & Analytics
           </div>
-          <div style={{ fontSize: 14, color: "var(--text2)" }}>
-            Sprint 14 — Apr 1 to Apr 14, 2025
+          <div style={{ fontSize: 13, color: "var(--text2)" }}>
+            Sprint 14 — Apr 1 to Apr 14
           </div>
         </div>
         <button className="btn btn-ghost" style={{ fontSize: 13 }}>
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
           Export PDF
         </button>
       </div>
-
       <div className="report-kpis">
         {[
           {
@@ -1357,7 +1195,6 @@ function ReportsPage({ tasks }) {
           </div>
         ))}
       </div>
-
       <div className="report-charts-row">
         <div className="chart-card">
           <div className="chart-title">Weekly Sprint Performance</div>
@@ -1397,7 +1234,6 @@ function ReportsPage({ tasks }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
         <div className="chart-card">
           <div className="chart-title">Team Radar Performance</div>
           <div className="chart-sub">By skill area this sprint</div>
@@ -1432,20 +1268,7 @@ function ReportsPage({ tasks }) {
               <Tooltip content={<CustomTooltip />} />
             </RadarChart>
           </ResponsiveContainer>
-          <div className="legend" style={{ marginTop: 8 }}>
-            {[
-              { name: "Mark", color: "#3b82f6" },
-              { name: "Sarah", color: "#a855f7" },
-              { name: "Jake", color: "#14b8a6" },
-            ].map((l) => (
-              <div key={l.name} className="legend-item">
-                <div className="legend-dot" style={{ background: l.color }} />
-                {l.name}
-              </div>
-            ))}
-          </div>
         </div>
-
         <div className="chart-card">
           <div className="chart-title">Cumulative Flow</div>
           <div className="chart-sub">Task distribution over time</div>
@@ -1479,114 +1302,6 @@ function ReportsPage({ tasks }) {
           </ResponsiveContainer>
         </div>
       </div>
-
-      <div className="chart-card fade-up" style={{ marginTop: 20 }}>
-        <div className="chart-title">Sprint Summary</div>
-        <table className="list-table" style={{ marginTop: 12 }}>
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Assigned</th>
-              <th>Completed</th>
-              <th>In Progress</th>
-              <th>Velocity</th>
-              <th>On-time Rate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              {
-                name: "Mark Kumar",
-                av: "MK",
-                color: "#3b82f6",
-                assigned: 5,
-                done: 4,
-                inprog: 1,
-                vel: 80,
-                ontime: "90%",
-              },
-              {
-                name: "Sarah Reeves",
-                av: "SR",
-                color: "#a855f7",
-                assigned: 4,
-                done: 3,
-                inprog: 1,
-                vel: 60,
-                ontime: "85%",
-              },
-              {
-                name: "Jake Park",
-                av: "JP",
-                color: "#14b8a6",
-                assigned: 3,
-                done: 2,
-                inprog: 1,
-                vel: 30,
-                ontime: "75%",
-              },
-            ].map((m) => (
-              <tr key={m.av}>
-                <td>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <div
-                      className="task-av"
-                      style={{
-                        background: `linear-gradient(135deg,${m.color},${m.color}99)`,
-                        width: 22,
-                        height: 22,
-                        fontSize: 9,
-                      }}
-                    >
-                      {m.av}
-                    </div>
-                    <span style={{ fontSize: 13, fontWeight: 500 }}>
-                      {m.name}
-                    </span>
-                  </div>
-                </td>
-                <td style={{ fontSize: 13, color: "var(--text2)" }}>
-                  {m.assigned}
-                </td>
-                <td style={{ fontSize: 13, color: "var(--green)" }}>
-                  {m.done}
-                </td>
-                <td style={{ fontSize: 13, color: "var(--yellow)" }}>
-                  {m.inprog}
-                </td>
-                <td>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
-                  >
-                    <div className="tp-bar" style={{ flex: 1, minWidth: 60 }}>
-                      <div
-                        className="tp-fill"
-                        style={{ width: `${m.vel}%`, background: m.color }}
-                      />
-                    </div>
-                    <span style={{ fontSize: 11, color: "var(--text3)" }}>
-                      {m.vel}%
-                    </span>
-                  </div>
-                </td>
-                <td
-                  style={{
-                    fontSize: 13,
-                    color:
-                      parseInt(m.ontime) >= 85
-                        ? "var(--green)"
-                        : "var(--yellow)",
-                  }}
-                >
-                  {m.ontime}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
@@ -1595,34 +1310,28 @@ function OwnerDashboard() {
   return (
     <div className="fade-up">
       <div className="section-header" style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div className="owner-page-crown">♛</div>
             <div
-              style={{
-                fontSize: 24,
-                fontWeight: 800,
-                letterSpacing: "-0.8px",
-                color: "var(--text)",
-              }}
+              style={{ fontSize: 22, fontWeight: 800, color: "var(--text)" }}
             >
               Owner Dashboard
             </div>
           </div>
-          <div style={{ fontSize: 14, color: "var(--text2)" }}>
-            Full organizational view — only visible to owners
+          <div style={{ fontSize: 13, color: "var(--text2)" }}>
+            Full organizational view — owners only
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button className="btn btn-ghost" style={{ fontSize: 12 }}>
-            📊 Export Report
+            Export Report
           </button>
           <button className="btn btn-primary" style={{ fontSize: 12 }}>
             + New Project
           </button>
         </div>
       </div>
-
       <div className="owner-kpis">
         {[
           {
@@ -1678,13 +1387,21 @@ function OwnerDashboard() {
           </div>
         ))}
       </div>
-
       <div className="owner-charts-row">
-        <div className="chart-card" style={{ flex: 2 }}>
+        <div className="chart-card">
           <div className="chart-title">Revenue Trend</div>
-          <div className="chart-sub">Monthly revenue 2025</div>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={OWNER_ANALYTICS.revenue}>
+          <div className="chart-sub">Monthly this year</div>
+          <ResponsiveContainer width="100%" height={160}>
+            <AreaChart
+              data={[
+                { month: "Jan", value: 42000 },
+                { month: "Feb", value: 38000 },
+                { month: "Mar", value: 55000 },
+                { month: "Apr", value: 61000 },
+                { month: "May", value: 58000 },
+                { month: "Jun", value: 72000 },
+              ]}
+            >
               <XAxis
                 dataKey="month"
                 tick={{ fontSize: 10, fill: "var(--text3)" }}
@@ -1695,327 +1412,45 @@ function OwnerDashboard() {
                 tick={{ fontSize: 10, fill: "var(--text3)" }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(v) => `$${v / 1000}k`}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
                 dataKey="value"
-                stroke="#3b82f6"
-                fill="rgba(59,130,246,0.15)"
+                stroke="#f59e0b"
+                fill="rgba(245,158,11,0.15)"
                 name="Revenue"
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-
-        <div className="chart-card" style={{ flex: 1 }}>
-          <div className="chart-title">Project Budget Usage</div>
-          <div className="chart-sub">Budget vs Spent</div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              marginTop: 12,
-            }}
-          >
-            {OWNER_ANALYTICS.projectHealth.map((p) => (
-              <div key={p.name}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 4,
-                  }}
-                >
-                  <span style={{ fontSize: 12, color: "var(--text)" }}>
-                    {p.name}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color:
-                        p.risk === "high"
-                          ? "#ef4444"
-                          : p.risk === "medium"
-                            ? "#f59e0b"
-                            : "#22c55e",
-                    }}
-                  >
-                    {p.risk === "high"
-                      ? "⚠ Risk"
-                      : p.risk === "medium"
-                        ? "△ Monitor"
-                        : "✓ Good"}
-                  </span>
-                </div>
-                <div className="tp-bar">
-                  <div
-                    className="tp-fill"
-                    style={{
-                      width: `${Math.round((p.spent / p.budget) * 100)}%`,
-                      background:
-                        p.risk === "high"
-                          ? "#ef4444"
-                          : p.risk === "medium"
-                            ? "#f59e0b"
-                            : "#22c55e",
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: 2,
-                  }}
-                >
-                  <span style={{ fontSize: 10, color: "var(--text3)" }}>
-                    ${(p.spent / 1000).toFixed(1)}k spent
-                  </span>
-                  <span style={{ fontSize: 10, color: "var(--text3)" }}>
-                    ${(p.budget / 1000).toFixed(0)}k budget
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="chart-card fade-up" style={{ marginTop: 20 }}>
-        <div className="chart-title">Team Performance & Cost Overview</div>
-        <div className="chart-sub">
-          Owner-only view — cost and efficiency metrics
-        </div>
-        <table className="list-table" style={{ marginTop: 12 }}>
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Role</th>
-              <th>Active Tasks</th>
-              <th>Done This Sprint</th>
-              <th>Efficiency</th>
-              <th>Monthly Cost</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {OWNER_ANALYTICS.teamStats.map((m) => (
-              <tr key={m.name}>
-                <td>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <div
-                      className="task-av"
-                      style={{
-                        background: "linear-gradient(135deg,#3b82f6,#a855f7)",
-                        width: 24,
-                        height: 24,
-                        fontSize: 9,
-                      }}
-                    >
-                      {m.name
-                        .split(" ")
-                        .map((w) => w[0])
-                        .join("")}
-                    </div>
-                    <span style={{ fontSize: 13, fontWeight: 500 }}>
-                      {m.name}
-                    </span>
-                  </div>
-                </td>
-                <td style={{ fontSize: 12, color: "var(--text2)" }}>
-                  {m.role}
-                </td>
-                <td style={{ fontSize: 13, fontWeight: 600 }}>{m.tasks}</td>
-                <td style={{ fontSize: 13, color: "var(--green)" }}>
-                  {m.done}
-                </td>
-                <td>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
-                  >
-                    <div className="tp-bar" style={{ flex: 1, minWidth: 60 }}>
-                      <div
-                        className="tp-fill"
-                        style={{
-                          width: `${m.efficiency}%`,
-                          background:
-                            m.efficiency >= 90
-                              ? "#22c55e"
-                              : m.efficiency >= 80
-                                ? "#3b82f6"
-                                : "#f59e0b",
-                        }}
-                      />
-                    </div>
-                    <span style={{ fontSize: 11, color: "var(--text3)" }}>
-                      {m.efficiency}%
-                    </span>
-                  </div>
-                </td>
-                <td
-                  style={{
-                    fontSize: 13,
-                    color: "var(--text)",
-                    fontWeight: 600,
-                  }}
-                >
-                  {m.cost}
-                </td>
-                <td>
-                  <button
-                    className="btn btn-ghost"
-                    style={{ fontSize: 11, padding: "3px 8px" }}
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="owner-bottom-row" style={{ marginTop: 20 }}>
-        <div className="panel">
-          <div className="panel-title">
-            Project Health Summary{" "}
-            <span className="panel-action">All Projects →</span>
-          </div>
-          {OWNER_ANALYTICS.projectHealth.map((p) => (
-            <div key={p.name} className="dl-item">
-              <div
-                className="dl-dot"
-                style={{
-                  background:
-                    p.risk === "high"
-                      ? "#ef4444"
-                      : p.risk === "medium"
-                        ? "#f59e0b"
-                        : "#22c55e",
-                }}
-              />
-              <div className="dl-info">
-                <div className="dl-name">{p.name}</div>
-                <div className="dl-id">Health: {p.health}%</div>
-              </div>
-              <span
-                className="dl-badge"
-                style={{
-                  background:
-                    p.risk === "high"
-                      ? "rgba(239,68,68,0.12)"
-                      : p.risk === "medium"
-                        ? "rgba(245,158,11,0.12)"
-                        : "rgba(34,197,94,0.12)",
-                  color:
-                    p.risk === "high"
-                      ? "#ef4444"
-                      : p.risk === "medium"
-                        ? "#f59e0b"
-                        : "#22c55e",
-                }}
-              >
-                {p.risk === "high"
-                  ? "⚠ Risk"
-                  : p.risk === "medium"
-                    ? "△ Monitor"
-                    : "✓ Healthy"}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="panel">
-          <div className="panel-title">
-            Billing & Subscription{" "}
-            <span className="panel-action">Manage →</span>
-          </div>
-          <div className="owner-billing">
-            <div className="billing-plan">
-              <div className="billing-plan-badge">Pro Plan</div>
-              <div className="billing-plan-price">
-                $149<span>/month</span>
-              </div>
-              <div className="billing-plan-renewal">Renews Apr 30, 2025</div>
-            </div>
-            <div className="billing-stats">
-              {[
-                { label: "Seats used", val: "8 / 15" },
-                { label: "Storage", val: "42 / 100 GB" },
-                { label: "API calls", val: "12,400 / 50K" },
-                { label: "Integrations", val: "6 active" },
-              ].map((s) => (
-                <div key={s.label} className="billing-stat-row">
-                  <span className="billing-stat-label">{s.label}</span>
-                  <span className="billing-stat-val">{s.val}</span>
-                </div>
-              ))}
-            </div>
-            <button
-              className="btn btn-ghost"
-              style={{ width: "100%", marginTop: 10, fontSize: 12 }}
-            >
-              ⬆ Upgrade to Enterprise
-            </button>
-          </div>
-        </div>
-
-        <div className="panel">
-          <div className="panel-title">
-            Security & Access Log{" "}
-            <span className="panel-action">View all →</span>
-          </div>
+        <div className="chart-card">
+          <div className="chart-title">Project Health</div>
+          <div className="chart-sub">Status of active projects</div>
           {[
-            {
-              icon: "🔐",
-              text: "Mark logged in from new device",
-              time: "2h ago",
-              type: "info",
-            },
-            {
-              icon: "⚠️",
-              text: "Failed login attempt — 3x",
-              time: "5h ago",
-              type: "warn",
-            },
-            {
-              icon: "👤",
-              text: "Sarah role changed to Admin",
-              time: "1d ago",
-              type: "success",
-            },
-            {
-              icon: "🔑",
-              text: "API key rotated by Jake",
-              time: "2d ago",
-              type: "info",
-            },
-            {
-              icon: "🚫",
-              text: "Unauthorized access blocked",
-              time: "3d ago",
-              type: "error",
-            },
-          ].map((s, i) => (
-            <div key={i} className="activity-item">
+            { name: "Phoenix App", health: 92, color: "#22c55e" },
+            { name: "Orion API", health: 78, color: "#f59e0b" },
+            { name: "Nova UI", health: 95, color: "#3b82f6" },
+            { name: "Atlas Backend", health: 64, color: "#ef4444" },
+          ].map((p) => (
+            <div key={p.name} style={{ marginBottom: 8 }}>
               <div
-                className="activity-icon"
                 style={{
-                  background:
-                    s.type === "warn" || s.type === "error"
-                      ? "rgba(239,68,68,.1)"
-                      : "rgba(59,130,246,.1)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 12,
+                  marginBottom: 3,
                 }}
               >
-                {s.icon}
+                <span style={{ color: "var(--text2)" }}>{p.name}</span>
+                <span style={{ color: p.color, fontWeight: 700 }}>
+                  {p.health}%
+                </span>
               </div>
-              <div>
-                <div className="activity-text">{s.text}</div>
-                <div className="activity-time">{s.time}</div>
+              <div className="tp-bar">
+                <div
+                  className="tp-fill"
+                  style={{ width: `${p.health}%`, background: p.color }}
+                />
               </div>
             </div>
           ))}
@@ -2070,9 +1505,6 @@ export default function Todo() {
       if (e.key === "k" || e.key === "K") {
         e.preventDefault();
         setModal(true);
-      }
-      if (e.key === "/") {
-        e.preventDefault();
       }
       if (e.key === "Escape") {
         setModal(false);
@@ -2158,7 +1590,7 @@ export default function Todo() {
     const oldStatus = ["todo", "inprog", "done"].find((s) =>
       tasks[s].find((t) => t.id === task.id),
     );
-    if (oldStatus === newStatus) return;
+    if (!oldStatus || oldStatus === newStatus) return;
     setTasks((prev) => ({
       ...prev,
       [oldStatus]: prev[oldStatus].filter((t) => t.id !== task.id),
@@ -2259,7 +1691,6 @@ export default function Todo() {
   ];
   const allTasks = [...tasks.todo, ...tasks.inprog, ...tasks.done];
   const statusLabel = { todo: "To Do", inprog: "In Progress", done: "Done" };
-  const statusColor = { todo: "#60a5fa", inprog: "#fbbf24", done: "#4ade80" };
   const getTaskStatus = (task) => {
     if (tasks.todo.find((t) => t.id === task.id)) return "todo";
     if (tasks.inprog.find((t) => t.id === task.id)) return "inprog";
@@ -2274,7 +1705,6 @@ export default function Todo() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-
       <NotifPanel
         open={notifPanel}
         onClose={() => setNotifPanel(false)}
@@ -2283,7 +1713,6 @@ export default function Todo() {
           setNotifications((n) => n.map((x) => ({ ...x, unread: false })))
         }
       />
-
       {selectedTask && (
         <TaskDetailPanel
           task={selectedTask}
@@ -2302,11 +1731,9 @@ export default function Todo() {
               <div className="logo-ver">v3.4.0 · World #1</div>
             </div>
           </div>
-
           <div style={{ padding: "0 12px 8px" }}>
             <SprintHealth tasks={tasks} />
           </div>
-
           <div className="sidebar-section">Navigation</div>
           {NAV_ITEMS.map((item) => (
             <div
@@ -2328,20 +1755,17 @@ export default function Todo() {
               {item.badge && <span className="nav-badge">{item.badge}</span>}
             </div>
           ))}
-
           <div
             className={`nav-item ${activeNav === "Owner" ? "active" : ""}`}
             onClick={() => {
               setActiveNav("Owner");
               setSidebarOpen(false);
             }}
-            style={{ position: "relative" }}
           >
             <span className="nav-icon">♛</span>
             <span>Owner View</span>
             <span className="nav-badge owner-nav-badge">PRO</span>
           </div>
-
           <div className="sidebar-section">Projects</div>
           {PROJECTS.map((p) => (
             <div key={p.name} className="proj-item">
@@ -2350,7 +1774,6 @@ export default function Todo() {
               <span className="proj-task-count">{p.tasks}</span>
             </div>
           ))}
-
           <div className="sidebar-section">Team</div>
           <div
             className="nav-item"
@@ -2370,10 +1793,9 @@ export default function Todo() {
           >
             <span className="nav-icon">＋</span> New Organization
           </div>
-          <div className="nav-item" onClick={() => setSidebarOpen(false)}>
+          <div className="nav-item">
             <span className="nav-icon">⚙</span> Settings
           </div>
-
           <div className="sidebar-shortcut-hint">
             <div className="ssh-row">
               <kbd>K</kbd> Create task
@@ -2382,7 +1804,6 @@ export default function Todo() {
               <kbd>/</kbd> Quick search
             </div>
           </div>
-
           <div className="sidebar-bottom">
             <div className="user-row">
               <div
@@ -2412,8 +1833,6 @@ export default function Todo() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 >
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
@@ -2470,12 +1889,11 @@ export default function Todo() {
                 <path d="m21 21-4.35-4.35" />
               </svg>
               <input
-                placeholder="Search tasks…  / to focus"
+                placeholder="Search tasks..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-
             <button
               className="icon-btn theme-btn"
               onClick={() => setDarkMode(!darkMode)}
@@ -2506,7 +1924,6 @@ export default function Todo() {
                 </svg>
               )}
             </button>
-
             <button
               className={`icon-btn notif-btn ${unreadCount > 0 ? "has-notif" : ""}`}
               title="Notifications"
@@ -2527,42 +1944,9 @@ export default function Todo() {
                 <div className="notif-badge">{unreadCount}</div>
               )}
             </button>
-
-            <button
-              className="btn btn-ghost"
-              onClick={() => setInviteModal(true)}
-            >
-              ✉ Invite
-            </button>
-            <button className="btn btn-ghost" onClick={() => setOrgModal(true)}>
-              🏢 Org
-            </button>
             <button className="btn btn-primary" onClick={() => setModal(true)}>
               ＋ Task
             </button>
-
-            <button
-              className="btn-logout-top"
-              onClick={handleLogout}
-              title="Log out"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              Logout
-            </button>
-
             <UserMenu
               darkMode={darkMode}
               setDarkMode={setDarkMode}
@@ -2574,22 +1958,20 @@ export default function Todo() {
             {activeNav === "Timeline" && <TimelineView />}
             {activeNav === "Reports" && <ReportsPage tasks={tasks} />}
             {activeNav === "Owner" && <OwnerDashboard />}
-
             {activeNav === "Organizations" && (
               <div className="fade-up">
                 <div className="section-header" style={{ marginBottom: 24 }}>
                   <div>
                     <div
                       style={{
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: 800,
-                        letterSpacing: "-0.8px",
                         color: "var(--text)",
                       }}
                     >
                       Organizations
                     </div>
-                    <div style={{ fontSize: 14, color: "var(--text2)" }}>
+                    <div style={{ fontSize: 13, color: "var(--text2)" }}>
                       Manage your teams and workspaces
                     </div>
                   </div>
@@ -2638,7 +2020,7 @@ export default function Todo() {
                           style={{ fontSize: 12, flex: 1 }}
                           onClick={() => setInviteModal(true)}
                         >
-                          ✉ Invite Member
+                          ✉ Invite
                         </button>
                         <button
                           className="btn btn-ghost"
@@ -2655,10 +2037,8 @@ export default function Todo() {
                   >
                     <div className="org-add-inner">
                       <div className="org-add-icon">＋</div>
-                      <div className="org-add-label">Create Organization</div>
-                      <div className="org-add-sub">
-                        Set up a new team workspace
-                      </div>
+                      <div className="org-add-label">New Organization</div>
+                      <div className="org-add-sub">Create a workspace</div>
                     </div>
                   </div>
                 </div>
@@ -2666,62 +2046,98 @@ export default function Todo() {
             )}
 
             {![
-              "Organizations",
-              "Reports",
               "Timeline",
-              "Notifications",
+              "Reports",
               "Owner",
+              "Organizations",
+              "Notifications",
             ].includes(activeNav) && (
               <>
-                <div className="metrics fade-up">
+                <div className="section-header" style={{ marginBottom: 16 }}>
+                  <div
+                    style={{ display: "flex", flexDirection: "column", gap: 4 }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 800,
+                        letterSpacing: "-0.6px",
+                        color: "var(--text)",
+                      }}
+                    >
+                      {activeNav === "Board"
+                        ? "Task Board"
+                        : activeNav === "Backlog"
+                          ? "Backlog"
+                          : "Dashboard"}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button
+                      className="btn btn-ghost"
+                      style={{ fontSize: 12 }}
+                      onClick={() => setInviteModal(true)}
+                    >
+                      ✉ Invite
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      style={{ fontSize: 12 }}
+                      onClick={() => setModal(true)}
+                    >
+                      ＋ New Task
+                    </button>
+                  </div>
+                </div>
+
+                <div className="metrics">
                   {[
                     {
-                      label: "To Do",
-                      val: tasks.todo.length,
-                      sub: "↑ +2 this week",
-                      cls: "up",
+                      label: "Total Tasks",
+                      val: allTasks.length,
+                      sub: "+3 this week",
                       color: "#3b82f6",
-                      pct: 42,
+                      trend: "up",
+                      pct: 70,
                     },
                     {
                       label: "In Progress",
                       val: tasks.inprog.length,
-                      sub: "→ no change",
-                      cls: "neutral",
+                      sub: "2 due today",
                       color: "#f59e0b",
-                      pct: 17,
+                      trend: "neutral",
+                      pct: 45,
                     },
                     {
-                      label: "In Review",
-                      val: 3,
-                      sub: "↓ -1 since Mon",
-                      cls: "down",
-                      color: "#a855f7",
-                      pct: 10,
-                    },
-                    {
-                      label: "Done",
+                      label: "Completed",
                       val: tasks.done.length,
-                      sub: "↑ +4 this week",
-                      cls: "up",
+                      sub: "↑ 2 vs yesterday",
                       color: "#22c55e",
-                      pct: 28,
+                      trend: "up",
+                      pct: 100,
                     },
                     {
-                      label: "Completion",
-                      val: "92%",
-                      sub: "↑ +3% vs last sprint",
-                      cls: "up",
-                      color: "#14b8a6",
-                      pct: 92,
+                      label: "Overdue",
+                      val: 1,
+                      sub: "↓ from 2",
+                      color: "#ef4444",
+                      trend: "down",
+                      pct: 20,
                     },
-                  ].map((m, i) => (
-                    <div key={i} className="metric-card">
+                  ].map((m) => (
+                    <div key={m.label} className="metric-card">
                       <div className="metric-label">{m.label}</div>
                       <div className="metric-val" style={{ color: m.color }}>
                         {m.val}
                       </div>
-                      <div className={`metric-sub ${m.cls}`}>{m.sub}</div>
+                      <div className={`metric-sub ${m.trend}`}>{m.sub}</div>
                       <div className="metric-bar">
                         <div
                           className="metric-bar-fill"
@@ -2732,42 +2148,37 @@ export default function Todo() {
                   ))}
                 </div>
 
-                <div className="filter-row fade-up">
-                  {[
-                    { label: "All tasks", key: "all" },
-                    { label: "🔴 High priority", key: "high" },
-                    { label: "👤 Mine", key: "mine" },
-                    { label: "Backend", key: "backend" },
-                    { label: "Frontend", key: "frontend" },
-                    { label: "⚠️ Overdue", key: "overdue" },
-                  ].map((f) => (
-                    <div
-                      key={f.key}
-                      className={`filter-chip ${activeFilter === f.key ? "active" : ""}`}
-                      onClick={() => setActiveFilter(f.key)}
+                <div className="filter-row">
+                  {["all", "high", "mine", "backend", "frontend"].map((f) => (
+                    <button
+                      key={f}
+                      className={`filter-chip ${activeFilter === f ? "active" : ""}`}
+                      onClick={() => setActiveFilter(f)}
                     >
-                      {f.label}
-                    </div>
+                      {f === "all"
+                        ? "All"
+                        : f === "high"
+                          ? "High Priority"
+                          : f === "mine"
+                            ? "My Tasks"
+                            : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
                   ))}
-
-                  <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
-                    <button
-                      className={`view-btn ${view === "board" ? "active" : ""}`}
-                      onClick={() => setView("board")}
-                    >
-                      Board
-                    </button>
-                    <button
-                      className={`view-btn ${view === "list" ? "active" : ""}`}
-                      onClick={() => setView("list")}
-                    >
-                      List
-                    </button>
+                  <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
+                    {["board", "list"].map((v) => (
+                      <button
+                        key={v}
+                        className={`view-btn ${view === v ? "active" : ""}`}
+                        onClick={() => setView(v)}
+                      >
+                        {v === "board" ? "Board" : "List"}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 {view === "board" && (
-                  <div className="board fade-up">
+                  <div className="board">
                     {colMeta.map((col) => (
                       <div
                         key={col.key}
@@ -2780,16 +2191,18 @@ export default function Todo() {
                             className="col-dot"
                             style={{ background: col.color }}
                           />
-                          <span className="col-label">{col.label}</span>
-                          <span className="col-count">
+                          <div
+                            className="col-label"
+                            style={{ color: col.labelColor }}
+                          >
+                            {col.label}
+                          </div>
+                          <div className="col-count">
                             {tasks[col.key].filter(filterTask).length}
-                          </span>
+                          </div>
                           <button
                             className="col-add-btn"
-                            onClick={() => {
-                              setNewTask({ ...newTask, status: col.key });
-                              setModal(true);
-                            }}
+                            onClick={() => setModal(true)}
                           >
                             ＋
                           </button>
@@ -2815,421 +2228,363 @@ export default function Todo() {
 
                 {view === "list" && (
                   <div
-                    className="fade-up"
-                    style={{
-                      marginBottom: 24,
-                      background: "var(--bg2)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "var(--radius-lg)",
-                      overflow: "hidden",
-                    }}
+                    className="chart-card fade-up"
+                    style={{ marginBottom: 24, overflowX: "auto" }}
                   >
                     <table className="list-table">
                       <thead>
                         <tr>
                           <th>Task</th>
-                          <th>Status</th>
                           <th>Priority</th>
+                          <th>Status</th>
                           <th>Assignee</th>
                           <th>Due</th>
                           <th>Progress</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {allTasks.filter(filterTask).map((task) => {
-                          const sk = getTaskStatus(task);
-                          return (
-                            <tr
-                              key={task.id}
-                              style={{ cursor: "pointer" }}
-                              onClick={() => setSelectedTask(task)}
-                            >
-                              <td>
-                                <div
-                                  style={{
-                                    fontSize: 14,
-                                    fontWeight: 500,
-                                    textDecoration:
-                                      task.progress === 100
-                                        ? "line-through"
-                                        : "none",
-                                    color:
-                                      task.progress === 100
-                                        ? "var(--text3)"
-                                        : "var(--text)",
-                                  }}
-                                >
-                                  {task.title}
-                                </div>
-                                <div
-                                  style={{
-                                    fontSize: 11,
-                                    fontFamily: "var(--mono)",
-                                    color: "var(--text3)",
-                                  }}
-                                >
-                                  {task.id}
-                                </div>
-                              </td>
-                              <td>
-                                <span
-                                  className="tag"
-                                  style={{
-                                    background: `${statusColor[sk]}22`,
-                                    color: statusColor[sk],
-                                    fontSize: 11,
-                                  }}
-                                >
-                                  {statusLabel[sk]}
-                                </span>
-                              </td>
-                              <td>
-                                <span
-                                  className={`priority-pill p-${task.priority}`}
-                                >
-                                  {task.priority.charAt(0).toUpperCase() +
-                                    task.priority.slice(1)}
-                                </span>
-                              </td>
-                              <td>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 7,
-                                  }}
-                                >
-                                  <div
-                                    className="task-av"
-                                    style={{
-                                      background: `linear-gradient(135deg,${task.color},${task.color}99)`,
-                                      width: 22,
-                                      height: 22,
-                                      fontSize: 9,
-                                    }}
-                                  >
-                                    {task.assignee}
-                                  </div>
-                                  <span
-                                    style={{
-                                      fontSize: 13,
-                                      color: "var(--text2)",
-                                    }}
-                                  >
-                                    {task.assigneeName}
-                                  </span>
-                                </div>
-                              </td>
-                              <td
+                        {allTasks.filter(filterTask).map((task) => (
+                          <tr
+                            key={task.id}
+                            onClick={() => setSelectedTask(task)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td>
+                              <div style={{ fontWeight: 600, fontSize: 12 }}>
+                                {task.title}
+                              </div>
+                              <div
                                 style={{
-                                  fontSize: 13,
-                                  color:
-                                    task.priority === "high"
-                                      ? "var(--red)"
-                                      : "var(--text3)",
+                                  fontSize: 10,
+                                  color: "var(--text3)",
+                                  fontFamily: "var(--mono)",
                                 }}
                               >
-                                {task.due}
-                              </td>
-                              <td style={{ minWidth: 100 }}>
+                                {task.id}
+                              </div>
+                            </td>
+                            <td>
+                              <span
+                                className={`priority-pill p-${task.priority}`}
+                              >
+                                {task.priority}
+                              </span>
+                            </td>
+                            <td>
+                              <span
+                                style={{ fontSize: 11, color: "var(--text2)" }}
+                              >
+                                {statusLabel[getTaskStatus(task)]}
+                              </span>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 6,
+                                }}
+                              >
                                 <div
+                                  className="task-av"
                                   style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 7,
+                                    background: `linear-gradient(135deg,${task.color},${task.color}99)`,
+                                    width: 20,
+                                    height: 20,
+                                    fontSize: 8,
                                   }}
                                 >
-                                  <div className="tp-bar" style={{ flex: 1 }}>
-                                    <div
-                                      className="tp-fill"
-                                      style={{
-                                        width: `${task.progress}%`,
-                                        background:
-                                          task.progress === 100
-                                            ? "var(--green)"
-                                            : "var(--accent)",
-                                      }}
-                                    />
-                                  </div>
-                                  <span
-                                    style={{
-                                      fontSize: 11,
-                                      fontFamily: "var(--mono)",
-                                      color: "var(--text3)",
-                                    }}
-                                  >
-                                    {task.progress}%
-                                  </span>
+                                  {task.assignee}
                                 </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                                <span style={{ fontSize: 11 }}>
+                                  {task.assigneeName}
+                                </span>
+                              </div>
+                            </td>
+                            <td style={{ fontSize: 11, color: "var(--text2)" }}>
+                              {task.due}
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 6,
+                                }}
+                              >
+                                <div className="tp-bar" style={{ flex: 1 }}>
+                                  <div
+                                    className="tp-fill"
+                                    style={{ width: `${task.progress}%` }}
+                                  />
+                                </div>
+                                <span
+                                  style={{
+                                    fontSize: 10,
+                                    color: "var(--text3)",
+                                    minWidth: 28,
+                                  }}
+                                >
+                                  {task.progress}%
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 )}
 
-                <div className="charts-row fade-up">
-                  <div className="chart-card">
-                    <div className="chart-title">Sprint Burndown</div>
-                    <div className="chart-sub">
-                      Ideal vs actual remaining points
-                    </div>
-                    <div className="burndown-meta">
-                      <div className="bm-item">
-                        <span className="bm-val">34</span>Remaining
-                      </div>
-                      <div className="bm-item">
-                        <span className="bm-val" style={{ color: "#22c55e" }}>
-                          9
-                        </span>
-                        Days left
-                      </div>
-                      <div className="bm-item">
-                        <span className="bm-val" style={{ color: "#f59e0b" }}>
-                          3.7
-                        </span>
-                        Avg/day
-                      </div>
-                    </div>
-                    <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={BURNDOWN}>
-                        <XAxis
-                          dataKey="day"
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Line
-                          dataKey="ideal"
-                          stroke="var(--border-strong)"
-                          strokeDasharray="5 5"
-                          dot={false}
-                          strokeWidth={1.5}
-                          name="Ideal"
-                        />
-                        <Line
-                          dataKey="actual"
-                          stroke="#3b82f6"
-                          dot={{ fill: "#3b82f6", r: 3 }}
-                          strokeWidth={2}
-                          name="Actual"
-                          connectNulls={false}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className="chart-card">
-                    <div className="chart-title">Task Split</div>
-                    <div className="chart-sub">By type this sprint</div>
-                    <div className="legend">
-                      {TASK_SPLIT.map((s) => (
-                        <div key={s.name} className="legend-item">
-                          <div
-                            className="legend-dot"
-                            style={{ background: s.color }}
-                          />
-                          {s.name} {s.value}%
+                {activeNav === "Dashboard" && (
+                  <>
+                    <div className="charts-row fade-up">
+                      <div className="chart-card">
+                        <div className="chart-title">Burndown Chart</div>
+                        <div className="chart-sub">
+                          Ideal vs Actual velocity
                         </div>
-                      ))}
-                    </div>
-                    <ResponsiveContainer width="100%" height={130}>
-                      <PieChart>
-                        <Pie
-                          data={TASK_SPLIT}
-                          dataKey="value"
-                          innerRadius="55%"
-                          outerRadius="80%"
-                          paddingAngle={2}
-                        >
+                        <ResponsiveContainer width="100%" height={180}>
+                          <LineChart data={BURNDOWN}>
+                            <XAxis
+                              dataKey="day"
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <YAxis
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Line
+                              dataKey="ideal"
+                              stroke="var(--border-strong)"
+                              strokeDasharray="5 5"
+                              dot={false}
+                              strokeWidth={1.5}
+                              name="Ideal"
+                            />
+                            <Line
+                              dataKey="actual"
+                              stroke="#3b82f6"
+                              dot={{ fill: "#3b82f6", r: 3 }}
+                              strokeWidth={2}
+                              name="Actual"
+                              connectNulls={false}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="chart-card">
+                        <div className="chart-title">Task Split</div>
+                        <div className="chart-sub">By type this sprint</div>
+                        <div className="legend">
                           {TASK_SPLIT.map((s) => (
-                            <Cell key={s.name} fill={s.color} />
+                            <div key={s.name} className="legend-item">
+                              <div
+                                className="legend-dot"
+                                style={{ background: s.color }}
+                              />
+                              {s.name} {s.value}%
+                            </div>
                           ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className="chart-card">
-                    <div className="chart-title">Daily Completions</div>
-                    <div className="chart-sub">Tasks created vs closed</div>
-                    <ResponsiveContainer width="100%" height={160}>
-                      <BarChart data={DAILY} barSize={10}>
-                        <XAxis
-                          dataKey="day"
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Bar
-                          dataKey="created"
-                          fill="#555c6e"
-                          radius={[3, 3, 0, 0]}
-                          name="Created"
-                        />
-                        <Bar
-                          dataKey="done"
-                          fill="#3b82f6"
-                          radius={[3, 3, 0, 0]}
-                          name="Completed"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div className="bottom-row fade-up">
-                  <div className="panel">
-                    <div className="panel-title">
-                      Upcoming Deadlines{" "}
-                      <span className="panel-action">View all →</span>
-                    </div>
-                    {DEADLINES.map((d) => (
-                      <div key={d.id} className="dl-item">
-                        <div className="dl-dot" style={{ background: d.dot }} />
-                        <div className="dl-info">
-                          <div className="dl-name">{d.name}</div>
-                          <div className="dl-id">{d.id}</div>
                         </div>
-                        <div className="dl-date">{d.date}</div>
-                        <span
-                          className="dl-badge"
-                          style={{
-                            background: d.statusBg,
-                            color: d.statusColor,
-                          }}
-                        >
-                          {d.status}
-                        </span>
+                        <ResponsiveContainer width="100%" height={130}>
+                          <PieChart>
+                            <Pie
+                              data={TASK_SPLIT}
+                              dataKey="value"
+                              innerRadius="55%"
+                              outerRadius="80%"
+                              paddingAngle={2}
+                            >
+                              {TASK_SPLIT.map((s) => (
+                                <Cell key={s.name} fill={s.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip content={<CustomTooltip />} />
+                          </PieChart>
+                        </ResponsiveContainer>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="panel">
-                    <div className="panel-title">
-                      Team Activity{" "}
-                      <span className="panel-action">View all →</span>
+                      <div className="chart-card">
+                        <div className="chart-title">Daily Completions</div>
+                        <div className="chart-sub">Tasks created vs closed</div>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <BarChart data={DAILY} barSize={10}>
+                            <XAxis
+                              dataKey="day"
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <YAxis
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar
+                              dataKey="created"
+                              fill="#555c6e"
+                              radius={[3, 3, 0, 0]}
+                              name="Created"
+                            />
+                            <Bar
+                              dataKey="done"
+                              fill="#3b82f6"
+                              radius={[3, 3, 0, 0]}
+                              name="Completed"
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
-                    {TEAM_ACTIVITY.map((m, i) => (
-                      <div key={i} className="team-item">
-                        <div className="team-av-wrap">
-                          <div
-                            className="team-av"
-                            style={{ background: m.color }}
-                          >
-                            {m.av}
+
+                    <div className="bottom-row fade-up">
+                      <div className="panel">
+                        <div className="panel-title">
+                          Upcoming Deadlines{" "}
+                          <span className="panel-action">View all →</span>
+                        </div>
+                        {DEADLINES.map((d) => (
+                          <div key={d.id} className="dl-item">
+                            <div
+                              className="dl-dot"
+                              style={{ background: d.dot }}
+                            />
+                            <div className="dl-info">
+                              <div className="dl-name">{d.name}</div>
+                              <div className="dl-id">{d.id}</div>
+                            </div>
+                            <div className="dl-date">{d.date}</div>
+                            <span
+                              className="dl-badge"
+                              style={{
+                                background: d.statusBg,
+                                color: d.statusColor,
+                              }}
+                            >
+                              {d.status}
+                            </span>
                           </div>
-                          {m.online && <div className="online-dot" />}
-                        </div>
-                        <div className="team-info">
-                          <div className="team-name">{m.name}</div>
-                          <div className="team-sub">{m.sub}</div>
-                        </div>
-                        <div className="team-time">{m.time}</div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="panel">
-                    <div className="panel-title">
-                      Team Velocity{" "}
-                      <span className="panel-action">This sprint</span>
-                    </div>
-                    {VELOCITY.map((v) => (
-                      <div key={v.label} className="vel-item">
-                        <div className="vel-label">{v.label}</div>
-                        <div className="vel-track">
-                          <div
-                            className="vel-fill"
-                            style={{ width: `${v.pct}%`, background: v.color }}
-                          />
+                      <div className="panel">
+                        <div className="panel-title">
+                          Team Activity{" "}
+                          <span className="panel-action">View all →</span>
                         </div>
-                        <div className="vel-count">{v.count}</div>
+                        {TEAM_ACTIVITY.map((m, i) => (
+                          <div key={i} className="team-item">
+                            <div className="team-av-wrap">
+                              <div
+                                className="team-av"
+                                style={{ background: m.color }}
+                              >
+                                {m.av}
+                              </div>
+                              {m.online && <div className="online-dot" />}
+                            </div>
+                            <div className="team-info">
+                              <div className="team-name">{m.name}</div>
+                              <div className="team-sub">{m.sub}</div>
+                            </div>
+                            <div className="team-time">{m.time}</div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="activity-row fade-up">
-                  <div className="panel">
-                    <div className="panel-title">
-                      Activity Feed{" "}
-                      <span className="panel-action">Mark all read →</span>
-                    </div>
-                    {ACTIVITY_FEED.map((a, i) => (
-                      <div key={i} className="activity-item">
-                        <div
-                          className="activity-icon"
-                          style={{ background: a.bg }}
-                        >
-                          {a.icon}
+                      <div className="panel">
+                        <div className="panel-title">
+                          Team Velocity{" "}
+                          <span className="panel-action">This sprint</span>
                         </div>
-                        <div>
-                          <div className="activity-text">{a.text}</div>
-                          <div className="activity-time">{a.time}</div>
-                        </div>
+                        {VELOCITY.map((v) => (
+                          <div key={v.label} className="vel-item">
+                            <div className="vel-label">{v.label}</div>
+                            <div className="vel-track">
+                              <div
+                                className="vel-fill"
+                                style={{
+                                  width: `${v.pct}%`,
+                                  background: v.color,
+                                }}
+                              />
+                            </div>
+                            <div className="vel-count">{v.count}</div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="panel">
-                    <div className="panel-title">
-                      Trend Analysis{" "}
-                      <span className="panel-action">Weekly</span>
                     </div>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <LineChart data={TREND}>
-                        <XAxis
-                          dataKey="day"
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10, fill: "var(--text3)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Line
-                          dataKey="created"
-                          stroke="#a855f7"
-                          dot={false}
-                          strokeWidth={2}
-                          name="Created"
-                        />
-                        <Line
-                          dataKey="completed"
-                          stroke="#22c55e"
-                          dot={false}
-                          strokeWidth={2}
-                          name="Completed"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+
+                    <div className="activity-row fade-up">
+                      <div className="panel">
+                        <div className="panel-title">
+                          Activity Feed{" "}
+                          <span className="panel-action">Mark all read →</span>
+                        </div>
+                        {ACTIVITY_FEED.map((a, i) => (
+                          <div key={i} className="activity-item">
+                            <div
+                              className="activity-icon"
+                              style={{ background: a.bg }}
+                            >
+                              {a.icon}
+                            </div>
+                            <div>
+                              <div className="activity-text">{a.text}</div>
+                              <div className="activity-time">{a.time}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="panel">
+                        <div className="panel-title">
+                          Trend Analysis{" "}
+                          <span className="panel-action">Weekly</span>
+                        </div>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <LineChart data={TREND}>
+                            <XAxis
+                              dataKey="day"
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <YAxis
+                              tick={{ fontSize: 10, fill: "var(--text3)" }}
+                              axisLine={false}
+                              tickLine={false}
+                            />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Line
+                              dataKey="created"
+                              stroke="#a855f7"
+                              dot={false}
+                              strokeWidth={2}
+                              name="Created"
+                            />
+                            <Line
+                              dataKey="completed"
+                              stroke="#22c55e"
+                              dot={false}
+                              strokeWidth={2}
+                              name="Completed"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
         </main>
       </div>
 
+      {/* CREATE TASK MODAL */}
       {modal && (
         <div
           className="modal-overlay"
@@ -3270,7 +2625,6 @@ export default function Todo() {
                 ✕
               </button>
             </div>
-
             {modalStep === 0 && (
               <div className="modal-body">
                 <div className="form-group">
@@ -3289,7 +2643,7 @@ export default function Todo() {
                   <label className="form-label">Description</label>
                   <textarea
                     className="form-input"
-                    placeholder="Add more context or details..."
+                    placeholder="Add more context..."
                     rows={3}
                     value={newTask.desc}
                     onChange={(e) =>
@@ -3350,7 +2704,6 @@ export default function Todo() {
                 </div>
               </div>
             )}
-
             {modalStep === 1 && (
               <div className="modal-body">
                 <div className="form-group">
@@ -3404,7 +2757,6 @@ export default function Todo() {
                 </div>
               </div>
             )}
-
             {modalStep === 2 && (
               <div className="modal-body">
                 <div className="confirm-task">
@@ -3425,32 +2777,6 @@ export default function Todo() {
                         newTask.priority.slice(1)}
                     </span>
                   </div>
-                  {newTask.tags && (
-                    <div
-                      className="confirm-row"
-                      style={{ alignItems: "flex-start" }}
-                    >
-                      <span className="confirm-label">Tags</span>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 4,
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        {newTask.tags
-                          .split(",")
-                          .map((t) => t.trim())
-                          .filter(Boolean)
-                          .map((t) => (
-                            <span key={t} className={`tag ${tagColor(t)}`}>
-                              {t}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <div className="modal-actions">
                   <button
@@ -3472,6 +2798,7 @@ export default function Todo() {
         </div>
       )}
 
+      {/* INVITE MODAL */}
       {inviteModal && (
         <div
           className="modal-overlay"
@@ -3510,9 +2837,9 @@ export default function Todo() {
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
                 >
-                  <option value="viewer">Viewer — can view tasks</option>
-                  <option value="member">Member — can edit tasks</option>
-                  <option value="admin">Admin — full access</option>
+                  <option value="viewer">Viewer</option>
+                  <option value="member">Member</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
               <div className="modal-actions">
@@ -3531,6 +2858,7 @@ export default function Todo() {
         </div>
       )}
 
+      {/* ORG MODAL */}
       {orgModal && (
         <div
           className="modal-overlay"
@@ -3576,50 +2904,6 @@ export default function Todo() {
                   style={{ resize: "none" }}
                 />
               </div>
-              {newOrg.name && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "10px 14px",
-                    background: "var(--bg3)",
-                    borderRadius: "var(--radius)",
-                    marginBottom: 14,
-                    border: "1px solid var(--border)",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: "var(--radius)",
-                      background: "linear-gradient(135deg,#3b82f6,#a855f7)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 13,
-                      fontWeight: 800,
-                      color: "#fff",
-                    }}
-                  >
-                    {newOrg.name
-                      .split(" ")
-                      .map((w) => w[0])
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>
-                      {newOrg.name}
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--text3)" }}>
-                      Free plan · 1 member · 0 projects
-                    </div>
-                  </div>
-                </div>
-              )}
               <div className="modal-actions">
                 <button
                   className="btn btn-ghost"
@@ -3628,7 +2912,7 @@ export default function Todo() {
                   Cancel
                 </button>
                 <button className="btn btn-primary btn-lg" onClick={createOrg}>
-                  Create Organization →
+                  Create Organization
                 </button>
               </div>
             </div>
@@ -3636,14 +2920,17 @@ export default function Todo() {
         </div>
       )}
 
+      {/* TOASTS */}
       <div className="toast-container">
         {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type || "info"}`}>
+          <div key={t.id} className={`toast toast-${t.type}`}>
             <span className="toast-icon">{t.icon}</span>
-            <span>{t.msg}</span>
+            {t.msg}
           </div>
         ))}
       </div>
+
+      <UnderConstructionToast/>
     </>
   );
 }

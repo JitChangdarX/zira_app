@@ -31,7 +31,6 @@ export default function Organization({ user, onCreate }) {
     }
   }, [id, apiurl.token]);
 
-  // ── API 1: fetch user (UNCHANGED) ─────────────────────────────────────────
   const fetchUsername = async () => {
     const token = localStorage.getItem("AUTH-X");
     try {
@@ -45,46 +44,10 @@ export default function Organization({ user, onCreate }) {
       });
 
       if (res.status === 401) {
-        const refreshRes = await fetch(apiurl.refresh_token, {
-          method: "POST",
-          credentials: "include",
-        });
-        if (!refreshRes.ok) {
-          localStorage.removeItem("AUTH-X");
-          navigate("/signup");
-          return;
-        }
-
-        const refreshData = await refreshRes.json();
-
-        localStorage.setItem("AUTH-X", refreshData.X_AUTH);
-
-        const retryRes = await fetch(apiurl.user_fetch_api, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth": refreshData.X_AUTH,
-          },
-          credentials: "include",
-        });
-
-        if (!retryRes.ok) {
-          localStorage.removeItem("AUTH-X");
-          navigate("/signup");
-          return;
-        }
-
-        const data = await retryRes.json();
-        setOrgName(data.verify_name || "");
+        localStorage.removeItem("AUTH-X");
+        navigate("/signup");
         return;
       }
-
-      if (!res.ok) {
-        console.error("API error:", res.status);
-        return;
-      }
-      const data = await res.json();
-      setOrgName(data.verify_name || "");
     } catch (err) {
       console.error("Network error:", err);
     }
@@ -168,45 +131,64 @@ export default function Organization({ user, onCreate }) {
 
   const handleSendInvite = async () => {
     if (!inviteEmail.trim()) return;
-    setInviteLoading(true);
-    setTimeout(() => {
-      setInviteLoading(false);
-      setInviteSent(true);
-      setInviteEmail("");
-      setTimeout(() => setInviteSent(false), 3000);
-    }, 1000);
 
-    const send_email = await fetch(apiurl.send_invite_api, {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-        Authorization: `Bearer ${apiurl.token}`,
-      },
-      body: JSON.stringify({
-        email: inviteEmail,
-      }),
-    });
+    const token_Auth = localStorage.getItem("AUTH-X");
 
-    if (send_email.status === 400) {
-      setErrorAlert({
-        type: "danger",
-        code: "401 unauthorized",
-        title: "User not found",
-        desc: "Your session may have expired. Please sign in again.",
-      });
-      localStorage.removeItem("AUTH-X");
+    // ✅ Safety check
+    if (!token_Auth) {
       navigate("/signup");
       return;
     }
-    if (send_email.status === 401) {
-      setErrorAlert({
-        type: "info",
-        code: "401 unauthorized",
-        title: "Please Create Your Organization",
-        desc: "Please create your organization then send invite",
+
+    try {
+      setInviteLoading(true);
+
+      const res = await fetch(apiurl.send_invite_api, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // ✅ fixed
+          Authorization: `Bearer ${token_Auth}`,
+        },
+        body: JSON.stringify({
+          email: inviteEmail,
+        }),
       });
 
-      return;
+      // ✅ HANDLE RESPONSES PROPERLY
+
+      if (res.status === 200) {
+        setInviteSent(true);
+        setInviteEmail("");
+        setTimeout(() => setInviteSent(false), 3000);
+      } else if (res.status === 400) {
+        localStorage.removeItem("AUTH-X");
+        navigate("/signup");
+      } else if (res.status === 401) {
+        setErrorAlert({
+          type: "info",
+          code: "401",
+          title: "Create Organization",
+          desc: "Please create your organization first",
+        });
+      } else if (res.status === 500) {
+        setErrorAlert({
+          type: "danger",
+          code: "500",
+          title: "Server Error",
+          desc: "Something went wrong. Try again later.",
+        });
+      }
+    } catch (err) {
+      console.error("Invite Error:", err);
+
+      setErrorAlert({
+        type: "danger",
+        code: "NETWORK",
+        title: "Network Error",
+        desc: "Check your internet connection",
+      });
+    } finally {
+      setInviteLoading(false); // ✅ always stop loader
     }
   };
 

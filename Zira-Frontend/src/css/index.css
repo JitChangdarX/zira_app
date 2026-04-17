@@ -46,32 +46,29 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-}
-
-/* CRITICAL FIX: html and body must allow natural scroll */
-html, body {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  /* NO overflow: hidden on y axis — that's what blocks scroll */
 }
 
 body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
   background: var(--z-bg);
   color: var(--z-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ── PAGE WRAPPER ─────────────────────────────────────────── */
-/* CRITICAL FIX: z13-page must NOT have overflow:hidden or fixed height */
 .z13-page {
   min-height: 100vh;
   width: 100%;
   position: relative;
   overflow-x: hidden;
-  /* overflow-y is NOT set — pages scroll naturally */
 }
 
 /* ── GLOW EFFECTS ─────────────────────────────────────────── */
@@ -175,6 +172,10 @@ body {
   padding: 6px 12px;
   border-radius: 6px;
   transition: color 0.2s, background 0.2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-nav-link:hover {
@@ -182,7 +183,7 @@ body {
   background: var(--z-border);
 }
 
-/* ── HEADER RIGHT ─────────────────────────────────────────── */
+/* ── HEADER RIGHT — signup only, signin removed ───────────── */
 .z13-header-right {
   display: flex;
   align-items: center;
@@ -195,13 +196,15 @@ body {
   border: 1px solid var(--z-border);
   color: var(--z-text2);
   border-radius: 8px;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 36px;
 }
 
 .z13-theme-toggle:hover {
@@ -209,16 +212,7 @@ body {
   background: var(--z-border);
 }
 
-.z13-signin {
-  color: var(--z-text2);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 6px 14px;
-  transition: color 0.2s;
-}
-
-.z13-signin:hover { color: var(--z-text); }
+/* REMOVED: .z13-signin — sign-in styles deleted entirely */
 
 .z13-header-cta {
   background: var(--z-orange);
@@ -226,9 +220,14 @@ body {
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
-  padding: 8px 16px;
+  padding: 9px 18px;
   border-radius: 8px;
   transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-header-cta:hover {
@@ -244,7 +243,14 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px;
+  margin-left: 4px;
+  border-radius: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-hamburger span {
@@ -253,10 +259,21 @@ body {
   height: 2px;
   background: var(--z-text2);
   border-radius: 2px;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s, opacity 0.2s;
 }
 
 .z13-hamburger:hover span { background: var(--z-text); }
+
+/* Hamburger open state — X animation */
+.z13-hamburger--open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.z13-hamburger--open span:nth-child(2) {
+  opacity: 0;
+}
+.z13-hamburger--open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
 
 /* ── SCROLL REVEAL ────────────────────────────────────────── */
 .z13-reveal {
@@ -311,7 +328,7 @@ body {
 }
 
 .z13-headline {
-  font-size: clamp(32px, 4.5vw, 54px);
+  font-size: clamp(28px, 5vw, 54px);
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -1.5px;
@@ -364,6 +381,8 @@ body {
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   border: none;
   cursor: pointer;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-btn-primary:hover {
@@ -393,6 +412,10 @@ body {
   font-weight: 500;
   padding: 10px 4px;
   transition: color 0.2s;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-btn-ghost:hover { color: var(--z-text); }
@@ -400,6 +423,7 @@ body {
 .z13-btn-outline-lg {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   color: var(--z-text2);
   text-decoration: none;
   font-size: 16px;
@@ -408,6 +432,8 @@ body {
   border-radius: 10px;
   border: 1px solid var(--z-border2);
   transition: color 0.2s, border-color 0.2s, background 0.2s;
+  min-height: 52px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-btn-outline-lg:hover {
@@ -442,6 +468,7 @@ body {
 /* ── HERO RIGHT ───────────────────────────────────────────── */
 .z13-hero-right-wrap {
   width: 100%;
+  min-width: 0;
 }
 
 .z13-hero-right {
@@ -468,6 +495,8 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .z13-dashboard-title {
@@ -495,6 +524,7 @@ body {
   background: var(--z-green);
   border-radius: 50%;
   animation: z13-live 1.5s ease infinite;
+  flex-shrink: 0;
 }
 
 @keyframes z13-live {
@@ -562,7 +592,6 @@ body {
 .z13-stat-sub { font-size: 10px; color: var(--z-text3); margin-top: 2px; line-height: 1.3; }
 
 /* ── STATS STRIP ──────────────────────────────────────────── */
-/* CRITICAL FIX: position relative, NOT fixed — fixed elements can overlap/clip content */
 .z13-statsstrip {
   position: relative;
   z-index: 1;
@@ -597,7 +626,6 @@ body {
   height: 40px;
   background: var(--z-border);
   flex-shrink: 0;
-  margin-right: 0;
   align-self: center;
 }
 
@@ -655,7 +683,7 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 120px;
+  width: 80px;
   z-index: 2;
   pointer-events: none;
 }
@@ -734,7 +762,7 @@ body {
 }
 
 .z13-section-title {
-  font-size: clamp(26px, 3.5vw, 40px);
+  font-size: clamp(24px, 3.5vw, 40px);
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--z-text);
@@ -865,23 +893,13 @@ body {
   justify-content: center;
 }
 
-.z13-compare-col--zira {
-  color: var(--z-text);
-}
+.z13-compare-col--zira { color: var(--z-text); }
 
-.z13-check-icon {
-  color: var(--z-green);
-  font-size: 16px;
-}
+.z13-check-icon { color: var(--z-green); font-size: 16px; }
 
-.z13-check-icon--neutral {
-  color: var(--z-text3);
-}
+.z13-check-icon--neutral { color: var(--z-text3); }
 
-.z13-cross-icon {
-  color: var(--z-red);
-  font-size: 16px;
-}
+.z13-cross-icon { color: var(--z-red); font-size: 16px; }
 
 /* ── HOW IT WORKS STEPS ───────────────────────────────────── */
 .z13-steps {
@@ -935,10 +953,6 @@ body {
   font-size: 14px;
   color: var(--z-text2);
   line-height: 1.6;
-}
-
-.z13-step-arrow {
-  display: none;
 }
 
 /* ── TESTIMONIALS ─────────────────────────────────────────── */
@@ -1014,6 +1028,7 @@ body {
   gap: 12px;
   justify-content: center;
   margin-top: 24px;
+  flex-wrap: wrap;
 }
 
 .z13-billing-opt {
@@ -1034,6 +1049,7 @@ body {
   position: relative;
   cursor: pointer;
   transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-toggle-track--on { background: var(--z-orange); }
@@ -1168,6 +1184,7 @@ body {
   top: 1px;
 }
 
+/* ── PLAN BUTTON — signup only ────────────────────────────── */
 .z13-btn-plan {
   display: block;
   text-align: center;
@@ -1178,6 +1195,12 @@ body {
   border-radius: 10px;
   transition: all 0.2s;
   margin-top: auto;
+  min-height: 48px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-btn-plan--primary {
@@ -1233,7 +1256,7 @@ body {
 }
 
 .z13-final-title {
-  font-size: clamp(30px, 5vw, 52px);
+  font-size: clamp(28px, 5vw, 52px);
   font-weight: 800;
   letter-spacing: -1.5px;
   color: var(--z-text);
@@ -1314,6 +1337,9 @@ body {
   color: var(--z-text3);
   text-decoration: none;
   transition: color 0.2s;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
 }
 
 .z13-footer-col a:hover { color: var(--z-text2); }
@@ -1378,17 +1404,23 @@ body {
   color: var(--z-text3);
   cursor: pointer;
   font-size: 18px;
-  padding: 0 4px;
+  padding: 4px;
   margin-left: auto;
   line-height: 1;
   transition: color 0.2s;
   flex-shrink: 0;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .z13-toast-close:hover { color: var(--z-text); }
 
 /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — TABLET (max-width: 1024px)
+   RESPONSIVE — TABLET  ≤ 1024px
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .z13-hero-inner {
@@ -1396,9 +1428,7 @@ body {
     gap: 48px;
   }
 
-  .z13-hero-right-wrap {
-    order: -1;
-  }
+  .z13-hero-right-wrap { order: -1; }
 
   .z13-hero {
     padding-top: calc(var(--z-header-h) + 48px);
@@ -1406,29 +1436,19 @@ body {
     text-align: center;
   }
 
-  .z13-hero-left {
-    align-items: center;
-  }
+  .z13-hero-left { align-items: center; }
 
   .z13-subtext { max-width: 100%; }
 
   .z13-checklist li { justify-content: flex-start; text-align: left; }
 
-  .z13-stat-cards {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .z13-stat-cards { grid-template-columns: repeat(4, 1fr); }
 
-  .z13-features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .z13-features-grid { grid-template-columns: repeat(2, 1fr); }
 
-  .z13-steps {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .z13-steps { grid-template-columns: repeat(2, 1fr); }
 
-  .z13-testimonials {
-    grid-template-columns: 1fr;
-  }
+  .z13-testimonials { grid-template-columns: 1fr 1fr; }
 
   .z13-plans {
     grid-template-columns: 1fr;
@@ -1441,26 +1461,25 @@ body {
     gap: 40px;
   }
 
-  .z13-footer-cols {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .z13-footer-cols { grid-template-columns: repeat(2, 1fr); }
 
-  .z13-statsstrip-inner {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+  .z13-statsstrip-inner { flex-wrap: wrap; gap: 8px; }
 
-  .z13-statsstrip-item {
-    min-width: 120px;
-    flex: 1 1 120px;
-  }
+  .z13-statsstrip-item { min-width: 120px; flex: 1 1 120px; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE (max-width: 768px)
+   RESPONSIVE — MOBILE  ≤ 768px
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* HEADER — hide desktop nav, show hamburger */
+
+  /* ── HEADER ── */
+  .z13-header-inner {
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  /* Desktop nav → hidden, becomes slide-down menu */
   .z13-nav {
     display: none;
     position: fixed;
@@ -1470,66 +1489,80 @@ body {
     background: var(--z-bg);
     border-bottom: 1px solid var(--z-border);
     flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding: 12px 16px;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px 12px 16px;
     z-index: 99;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
 
-  .z13-nav--open {
-    display: flex;
-  }
+  .z13-nav--open { display: flex; }
 
   .z13-nav-link {
     width: 100%;
-    padding: 10px 12px;
-    font-size: 16px;
+    padding: 12px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    min-height: 48px;
   }
 
-  .z13-hamburger {
+  /* Signup link in mobile menu */
+  .z13-nav--open .z13-signup-mobile {
     display: flex;
+    margin-top: 8px;
+    background: var(--z-orange);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 15px;
+    padding: 12px 14px;
+    text-decoration: none;
   }
 
-  .z13-signin { display: none; }
+  /* Show hamburger */
+  .z13-hamburger { display: flex; }
 
-  /* HERO */
+  /* Hide header signup on mobile (shown in menu instead) */
+  .z13-header-cta { display: none; }
+
+  /* ── HERO ── */
   .z13-hero {
-    padding-top: calc(var(--z-header-h) + 32px);
+    padding-top: calc(var(--z-header-h) + 28px);
     padding-bottom: 48px;
     padding-left: 0;
     padding-right: 0;
+    text-align: center;
   }
 
   .z13-hero-inner {
     padding: 0 16px;
-    gap: 32px;
+    gap: 28px;
   }
+
+  .z13-hero-left { align-items: center; }
 
   .z13-headline { letter-spacing: -0.8px; }
 
+  .z13-subtext { font-size: 15px; }
+
+  /* CTA buttons full-width stacked */
   .z13-hero-cta {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    gap: 10px;
   }
 
-  .z13-btn-primary {
-    justify-content: center;
-  }
+  .z13-btn-primary { justify-content: center; }
+  .z13-btn-ghost { text-align: center; justify-content: center; }
 
-  .z13-btn-ghost {
-    text-align: center;
-  }
+  /* ── STAT CARDS ── */
+  .z13-stat-cards { grid-template-columns: repeat(2, 1fr); }
 
-  /* STAT CARDS */
-  .z13-stat-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* STATS STRIP — key fix: wrap on mobile, no overflow cut */
-  .z13-statsstrip {
-    padding: 24px 16px;
-  }
+  /* ── STATS STRIP ── */
+  .z13-statsstrip { padding: 20px 16px; }
 
   .z13-statsstrip-inner {
     flex-direction: column;
@@ -1541,24 +1574,21 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--z-border);
     min-width: unset;
     flex: unset;
+    gap: 12px;
   }
 
-  .z13-statsstrip-item:last-child {
-    border-bottom: none;
-  }
+  .z13-statsstrip-item:last-child { border-bottom: none; }
 
-  .z13-statsstrip-divider {
-    display: none;
-  }
+  .z13-statsstrip-divider { display: none; }
 
   .z13-statsstrip-num {
     text-align: left;
     padding: 0;
-    font-size: 24px;
+    font-size: 26px;
     margin-bottom: 0;
   }
 
@@ -1569,24 +1599,18 @@ body {
     color: var(--z-text2);
   }
 
-  /* SECTIONS */
-  .z13-section {
-    padding: 64px 16px;
-  }
+  /* ── SECTIONS ── */
+  .z13-section { padding: 56px 16px; }
+  .z13-section-header { margin-bottom: 32px; }
+  .z13-section-sub { font-size: 15px; }
 
-  .z13-section-header {
-    margin-bottom: 40px;
-  }
+  /* ── FEATURES — single column ── */
+  .z13-features-grid { grid-template-columns: 1fr; }
 
-  /* FEATURES — single column on mobile */
-  .z13-features-grid {
-    grid-template-columns: 1fr;
-  }
+  .z13-feature-card { padding: 22px 18px; }
 
-  /* COMPARE TABLE — horizontal scroll on mobile */
-  .z13-compare-table {
-    overflow-x: auto;
-  }
+  /* ── COMPARE TABLE — horizontal scroll ── */
+  .z13-compare-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
   .z13-compare-header,
   .z13-compare-row {
@@ -1594,56 +1618,57 @@ body {
     padding: 12px 16px;
   }
 
-  /* STEPS — single column */
-  .z13-steps {
-    grid-template-columns: 1fr;
-  }
+  /* ── STEPS — single column ── */
+  .z13-steps { grid-template-columns: 1fr; }
 
-  /* TESTIMONIALS — single column */
-  .z13-testimonials {
-    grid-template-columns: 1fr;
-  }
+  /* ── TESTIMONIALS — single column ── */
+  .z13-testimonials { grid-template-columns: 1fr; }
 
-  /* PRICING */
+  /* ── PRICING — full width ── */
   .z13-plans {
     grid-template-columns: 1fr;
     max-width: 100%;
     padding: 0;
+    gap: 24px;
   }
 
-  /* FINAL CTA */
-  .z13-final-cta {
-    padding: 72px 16px;
-  }
+  /* Remove negative transform on featured plan — looks off on mobile */
+  .z13-plan--featured { transform: none; }
+  .z13-plan--featured:hover { transform: translateY(-3px); }
+
+  .z13-plan { padding: 28px 20px; }
+
+  /* ── FINAL CTA ── */
+  .z13-final-cta { padding: 64px 16px; }
 
   .z13-final-btns {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    gap: 10px;
   }
 
   .z13-btn-primary--lg,
   .z13-btn-outline-lg {
     justify-content: center;
     text-align: center;
+    width: 100%;
   }
 
-  /* FOOTER */
-  .z13-footer {
-    padding: 48px 16px 32px;
-  }
+  /* ── FOOTER ── */
+  .z13-footer { padding: 40px 16px 28px; }
 
   .z13-footer-inner {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   .z13-footer-cols {
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    gap: 20px;
   }
 
-  /* TOAST */
+  /* ── TOAST — full width ── */
   .z13-toast {
     left: 12px;
     right: 12px;
@@ -1651,26 +1676,58 @@ body {
     bottom: 16px;
   }
 
-  /* MARQUEE */
-  .z13-marquee-section {
-    padding: 28px 0;
-  }
+  /* ── MARQUEE ── */
+  .z13-marquee-section { padding: 24px 0; }
+
+  .z13-marquee-logo { padding: 8px 20px; font-size: 12px; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — SMALL MOBILE (max-width: 480px)
+   RESPONSIVE — SMALL MOBILE  ≤ 480px
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .z13-stat-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
-  .z13-footer-cols {
-    grid-template-columns: 1fr 1fr;
-  }
+  .z13-hero-inner { padding: 0 14px; }
 
-  .z13-header-cta {
-    font-size: 13px;
-    padding: 7px 12px;
-  }
+  .z13-badge { font-size: 11.5px; }
+
+  .z13-stat-cards { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  .z13-stat-card { padding: 12px 8px; }
+
+  .z13-stat-num { font-size: 14px; }
+
+  .z13-footer-cols { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .z13-section { padding: 44px 14px; }
+
+  .z13-plan { padding: 24px 16px; }
+
+  .z13-dashboard { padding: 18px 14px; }
+
+  .z13-testimonial { padding: 20px 16px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — TINY  ≤ 360px
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .z13-logo-text { font-size: 16px; }
+
+  .z13-theme-toggle { width: 32px; height: 32px; min-width: 32px; }
+
+  .z13-stat-cards { grid-template-columns: repeat(2, 1fr); }
+
+  .z13-footer-cols { grid-template-columns: 1fr; }
+}
+
+/* ── iOS safe area ────────────────────────────────────────── */
+@supports (padding: max(0px)) {
+  .z13-hero { padding-left: max(0px, env(safe-area-inset-left)); padding-right: max(0px, env(safe-area-inset-right)); }
+
+  .z13-footer { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+
+  .z13-toast { bottom: max(16px, env(safe-area-inset-bottom)); }
+
+  .z13-nav { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 }

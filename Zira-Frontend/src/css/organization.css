@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   ORGANIZATION SETTINGS  —  Dark Theme
+   ORGANIZATION SETTINGS  —  Dark Theme (Mobile Fixed)
    ═══════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
@@ -40,20 +40,26 @@
 /* ── Reset ────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
+html {
   height: 100%;
-  overflow: hidden;
+  /* REMOVED: overflow: hidden — was blocking mobile scroll */
+}
+
+body {
+  height: 100%;
+  /* REMOVED: overflow: hidden — was blocking mobile scroll */
+  -webkit-text-size-adjust: 100%; /* prevent iOS font size boost */
 }
 
 /* ── Root ─────────────────────────────────────────────────────── */
 .os-root {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; /* CHANGED: was height:100vh — allows content to grow on mobile */
   background: var(--bg-base);
   font-family: var(--font);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
+  /* REMOVED: overflow: hidden — was cutting off mobile content */
 }
 
 /* ── Top bar ──────────────────────────────────────────────────── */
@@ -66,12 +72,15 @@ html, body {
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 50;
+  position: sticky; /* stays visible while scrolling */
+  top: 0;
 }
 
 .os-topbar-left {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0; /* allow text to truncate */
 }
 
 .os-topbar-icon {
@@ -97,12 +106,18 @@ html, body {
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .os-topbar-sub {
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .os-saved-pill {
@@ -117,6 +132,8 @@ html, body {
   font-weight: 600;
   border: 1px solid rgba(34,197,94,0.25);
   animation: fadeInDown 0.3s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .os-saved-pill svg { width: 14px; height: 14px; }
@@ -130,13 +147,13 @@ html, body {
 .os-body {
   display: flex;
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  /* REMOVED: min-height: 0 and overflow: hidden — blocks mobile scroll */
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 24px;
   gap: 24px;
+  align-items: flex-start; /* ADDED: prevent sidebar from stretching full height */
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────── */
@@ -146,6 +163,10 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* REMOVED: overflow-y: auto — handled by page scroll on mobile */
+  position: sticky; /* ADDED: sidebar sticks while main scrolls on desktop */
+  top: 81px; /* matches topbar height */
+  max-height: calc(100vh - 81px);
   overflow-y: auto;
 }
 
@@ -174,6 +195,10 @@ html, body {
   cursor: pointer;
   transition: background var(--transition), color var(--transition);
   text-align: left;
+  width: 100%;
+  /* ADDED: better touch targets for mobile */
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .os-nav-item svg {
@@ -281,14 +306,8 @@ html, body {
   flex-direction: column;
   gap: 20px;
   min-width: 0;
-  overflow-y: auto;
-  padding-right: 4px;
+  /* REMOVED: overflow-y: auto and padding-right: 4px — page handles scroll on mobile */
 }
-
-.os-main::-webkit-scrollbar { width: 4px; }
-.os-main::-webkit-scrollbar-track { background: transparent; }
-.os-main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-.os-main::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
 /* ── Section card ─────────────────────────────────────────────── */
 .os-section {
@@ -308,6 +327,7 @@ html, body {
   align-items: center;
   gap: 14px;
   margin-bottom: 24px;
+  flex-wrap: wrap; /* ADDED: wrap on very small screens */
 }
 
 .os-section-icon {
@@ -379,7 +399,7 @@ html, body {
   flex-shrink: 0;
 }
 
-/* ── Inputs — the KEY fix: white text on dark bg ──────────────── */
+/* ── Inputs ───────────────────────────────────────────────────── */
 .os-input,
 .os-textarea {
   width: 100%;
@@ -388,13 +408,15 @@ html, body {
   border-radius: var(--radius-sm);
   padding: 11px 14px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px; /* CHANGED: 14→16px prevents iOS auto-zoom on focus */
   font-weight: 400;
-  color: var(--text-primary);           /* ← white text */
+  color: var(--text-primary);
   caret-color: #60a5fa;
   outline: none;
   transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
-  -webkit-text-fill-color: var(--text-primary); /* Safari fix */
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-appearance: none; /* ADDED: remove iOS default styling */
+  appearance: none;
 }
 
 .os-input::placeholder,
@@ -465,6 +487,7 @@ html, body {
   background: transparent !important;
   box-shadow: none !important;
   flex: 1;
+  min-width: 0; /* ADDED: prevents overflow on small screens */
 }
 
 .os-url-input:focus {
@@ -477,6 +500,7 @@ html, body {
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
+  line-height: 1.5; /* ADDED: better readability on mobile */
 }
 
 /* ── Section footer (save/cancel) ─────────────────────────────── */
@@ -488,6 +512,7 @@ html, body {
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
+  flex-wrap: wrap; /* ADDED: wrap buttons if space is tight */
 }
 
 .os-btn-cancel {
@@ -501,6 +526,8 @@ html, body {
   font-weight: 500;
   cursor: pointer;
   transition: background var(--transition), color var(--transition), border-color var(--transition);
+  min-height: 44px; /* ADDED: accessible touch target */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .os-btn-cancel:hover {
@@ -524,6 +551,8 @@ html, body {
   cursor: pointer;
   transition: opacity var(--transition), box-shadow var(--transition), background var(--transition);
   box-shadow: 0 4px 14px rgba(59,130,246,0.30);
+  min-height: 44px; /* ADDED: accessible touch target */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .os-btn-save svg { width: 15px; height: 15px; }
@@ -560,6 +589,7 @@ html, body {
   position: relative;
   display: flex;
   align-items: center;
+  min-width: 0; /* ADDED: prevents overflow */
 }
 
 .os-invite-icon {
@@ -579,12 +609,14 @@ html, body {
   border-radius: var(--radius-sm);
   padding: 11px 14px 11px 40px;
   font-family: var(--font);
-  font-size: 14px;
-  color: var(--text-primary);           /* ← white text */
+  font-size: 16px; /* CHANGED: 14→16px prevents iOS auto-zoom */
+  color: var(--text-primary);
   -webkit-text-fill-color: var(--text-primary);
   caret-color: #60a5fa;
   outline: none;
   transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  -webkit-appearance: none; /* ADDED: remove iOS default styling */
+  appearance: none;
 }
 
 .os-invite-input::placeholder {
@@ -621,6 +653,8 @@ html, body {
   transition: opacity var(--transition), box-shadow var(--transition), background var(--transition);
   box-shadow: 0 4px 14px rgba(59,130,246,0.30);
   flex-shrink: 0;
+  min-height: 44px; /* ADDED: accessible touch target */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .os-btn-invite svg { width: 16px; height: 16px; }
@@ -677,32 +711,223 @@ html, body {
   to { transform: rotate(360deg); }
 }
 
-/* ── Responsive ───────────────────────────────────────────────── */
-@media (max-width: 768px) {
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — Tablet  ≤ 900px
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
   .os-body {
-    flex-direction: column;
-    padding: 16px;
-    gap: 16px;
+    padding: 20px;
+    gap: 20px;
   }
 
   .os-sidebar {
-    width: 100%;
+    width: 220px;
+    position: static; /* remove sticky on mid-size */
+    max-height: none;
   }
+}
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — Phone  ≤ 768px  (THE KEY FIX)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Topbar ── */
   .os-topbar {
-    padding: 14px 16px;
+    padding: 12px 16px;
+    gap: 10px;
   }
 
+  .os-topbar-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .os-topbar-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .os-topbar-title {
+    font-size: 15px;
+  }
+
+  .os-topbar-sub {
+    font-size: 11px;
+  }
+
+  .os-saved-pill {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  /* ── Body — stack vertically ── */
+  .os-body {
+    flex-direction: column;
+    padding: 12px 16px 32px; /* extra bottom padding for safe area */
+    gap: 16px;
+  }
+
+  /* ── Sidebar — full width horizontal nav ── */
+  .os-sidebar {
+    width: 100%;
+    position: static;
+    max-height: none;
+    overflow: visible;
+    gap: 12px;
+  }
+
+  .os-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .os-nav::-webkit-scrollbar { display: none; }
+
+  .os-nav-item {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+
+  /* Hide team card on mobile to save space — show only nav */
+  .os-team-card {
+    display: none;
+  }
+
+  /* ── Main — full width ── */
+  .os-main {
+    width: 100%;
+    gap: 16px;
+  }
+
+  /* ── Sections ── */
   .os-section {
     padding: 20px 16px;
+    border-radius: var(--radius-md);
   }
 
+  .os-section-header {
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+
+  .os-section-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .os-section-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .os-section-title {
+    font-size: 15px;
+  }
+
+  .os-section-sub {
+    font-size: 12px;
+  }
+
+  /* ── Fields ── */
+  .os-fields {
+    gap: 16px;
+  }
+
+  /* ── URL wrap — stack prefix above input on tiny screens ── */
+  .os-url-wrap {
+    flex-wrap: wrap;
+  }
+
+  .os-url-prefix {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .os-url-input {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important;
+    padding-left: 14px !important;
+  }
+
+  /* ── Footer buttons — full width on mobile ── */
+  .os-section-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .os-btn-cancel,
+  .os-btn-save {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+
+  /* ── Invite row — stack on mobile ── */
   .os-invite-row {
     flex-direction: column;
+    gap: 10px;
   }
 
   .os-btn-invite {
+    width: 100%;
     justify-content: center;
-    padding: 12px;
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+
+  .os-invite-tip {
+    font-size: 12px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — Small Phone  ≤ 380px
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .os-topbar {
+    padding: 10px 12px;
+  }
+
+  .os-body {
+    padding: 10px 12px 32px;
+    gap: 12px;
+  }
+
+  .os-section {
+    padding: 16px 12px;
+  }
+
+  .os-stat-num {
+    font-size: 18px;
+  }
+
+  .os-topbar-sub {
+    display: none; /* hide subtitle on very small screens */
+  }
+}
+
+/* ── iOS safe area support (notch/home bar) ───────────────────── */
+@supports (padding: max(0px)) {
+  .os-body {
+    padding-bottom: max(32px, env(safe-area-inset-bottom));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .os-topbar {
+    padding-top: max(12px, env(safe-area-inset-top));
   }
 }
