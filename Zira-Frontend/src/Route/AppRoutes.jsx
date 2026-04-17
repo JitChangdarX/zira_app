@@ -7,7 +7,6 @@ const Todo = lazy(() => import("../Component/Todo"));
 const ZiraIndex = lazy(() => import("../Component/ZiraIndex"));
 const ZiraSignup = lazy(() => import("../Component/ZiraSignup"));
 
-// ✅ Normal import (IMPORTANT)
 import PublicRoute from "./ProtectRoute/PublicRoute";
 import ProtectedRoute from "./ProtectRoute/ProtectedRoute";
 import BestLoader from "./ProtectRoute/BestLoader";
@@ -46,7 +45,7 @@ export const AppRoutes = () => {
           }
         />
 
-        <Route path="signin" element={<Signin />} />
+        <Route path="/signin" element={<Signin />} />
       </Routes>
     </Suspense>
   );

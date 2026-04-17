@@ -9,6 +9,7 @@ import { sendInviteMail } from "./mail.js";
 import Organization from "./models/organization.js";
 import dotenv from "dotenv";
 import jwt, { decode } from "jsonwebtoken";
+import owner from "./models/owner.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
@@ -97,38 +98,49 @@ app.post("/signup-post-user", async (req, res) => {
 
 app.post("/quickauthapi/signin", async (req, res) => {
   try {
-    const { email, hashedPassword } = req.body;
-
+    const email = req.headers["x-email"];
+    const x_auth_identity = req.headers["x-auth-identity"];
     if (!email) {
       return res.status(400).json({
         message: "Please provide email",
       });
     }
-    if (!hashedPassword) {
+
+    if (!x_auth_identity) {
       return res.status(400).json({
         message: "Please provide password",
       });
     }
-    const user = await Owner.findOne({ email });
+
+    const user = await owner.findOne({ email });
+
     if (!user) {
-      return res.status(400).json({
-        message: "Invalid user",
-      });
-    }
-    const isMatch = await bcrypt.compare(hashedPassword, user.password);
-    if (!isMatch) {
-      return res.status(401).json({
-        message: "Please check your password",
+      return res.status(404).json({
+        message: "User not found",
+        code: "USER_NOT_FOUND",
       });
     }
 
+    const isMatch = await bcrypt.compare(x_auth_identity, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    const token = jwt.sign({ id: user.uuid }, secret, { expiresIn: "28d" });
+
+    // 🔹 Success response
     return res.status(200).json({
-      message: "Welcome back",
+      message: "Login successful",
+      X_AUTH: token,
     });
-  } catch (error) {
+  } catch (err) {
+    console.error("Signin Error:", err);
+
     return res.status(500).json({
-      message: "Server error",
-      error: error.message,
+      message: "Internal server error",
     });
   }
 });

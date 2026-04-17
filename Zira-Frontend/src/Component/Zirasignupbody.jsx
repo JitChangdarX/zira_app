@@ -9,6 +9,7 @@ export const Zirasignupbody = () => {
     setShowPassword,
     formData,
     setFormData,
+    navigate,
     handleSubmit,
     focused,
     setFocused,
@@ -18,7 +19,6 @@ export const Zirasignupbody = () => {
     setFieldErrors,
     shakeFields,
     setShakeFields,
-    switchsign,
     signin,
     hanndlesignin,
     isLoading,
@@ -48,6 +48,11 @@ export const Zirasignupbody = () => {
     if (len < 10) return "#fbbf24";
     return "#34d399";
   };
+
+  const switchsign =()=>
+  {
+    navigate("/signin?auth=required");
+  }
 
   return (
     <div className="zira-card">
