@@ -11,12 +11,12 @@ const ZiraSignup = lazy(() => import("../Component/ZiraSignup"));
 import PublicRoute from "./ProtectRoute/PublicRoute";
 import ProtectedRoute from "./ProtectRoute/ProtectedRoute";
 import BestLoader from "./ProtectRoute/BestLoader";
+import { Signin } from "../Component/Signin";
 
 export const AppRoutes = () => {
   return (
     <Suspense fallback={<BestLoader />}>
       <Routes>
-
         <Route path="/" element={<ZiraIndex />} />
 
         <Route
@@ -46,6 +46,7 @@ export const AppRoutes = () => {
           }
         />
 
+        <Route path="signin" element={<Signin />} />
       </Routes>
     </Suspense>
   );

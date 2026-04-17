@@ -21,6 +21,8 @@ export const Zirasignupbody = () => {
     switchsign,
     signin,
     hanndlesignin,
+    isLoading,
+    setIsLoading,
   } = useSignup();
 
   const handleChange = (e) => {
@@ -300,19 +302,29 @@ export const Zirasignupbody = () => {
           />
         </div>
 
-        <button type="submit" className="zira-btn">
-          <span>Create Account</span>
-          <svg
-            className="btn-arrow"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+        <button
+          type="submit"
+          className={`zira-btn ${isLoading ? "loading" : ""}`}
+          disabled={isLoading}
+        >
+          <span className="btn-text">
+            {isLoading ? "Creating Account…" : "Create Account"}
+          </span>
+          {isLoading ? (
+            <span className="btn-spinner" aria-hidden="true" />
+          ) : (
+            <svg
+              className="btn-arrow"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          )}
         </button>
       </form>
 

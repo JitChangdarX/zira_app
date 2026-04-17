@@ -584,3 +584,28 @@ body {
   margin-bottom: 1rem;
   animation: fadeSlideIn 0.25s ease both;
 }
+
+
+
+@media (max-width: 480px) {
+  html, body {
+    overflow: auto;
+  }
+
+  .zira-root {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    height: 100vh;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .zira-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+}

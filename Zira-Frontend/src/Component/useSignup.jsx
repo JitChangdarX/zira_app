@@ -11,6 +11,7 @@ export const useSignup = () => {
   const [focused, setFocused] = useState("");
   const [serverError, setServerError] = useState("");
   const [signin, checkSignin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
@@ -34,7 +35,6 @@ export const useSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setServerError("");
     setFieldErrors({ name: "", email: "", password: "" });
 
@@ -48,7 +48,6 @@ export const useSignup = () => {
       showFieldError("name", "Please provide your full name");
       hasError = true;
     }
-
     if (!email) {
       showFieldError("email", "Please provide your email address");
       hasError = true;
@@ -56,7 +55,6 @@ export const useSignup = () => {
       showFieldError("email", "Enter a valid email address");
       hasError = true;
     }
-
     if (!password) {
       showFieldError("password", "Please provide a password");
       hasError = true;
@@ -65,7 +63,10 @@ export const useSignup = () => {
       hasError = true;
     }
 
-    if (hasError) return;
+    if (hasError) return; // ← validation fails BEFORE loading starts, so no reset needed
+
+    // ✅ Only start loading after validation passes
+    setIsLoading(true);
 
     try {
       const frontendHash = SHA256(password).toString();
@@ -88,26 +89,25 @@ export const useSignup = () => {
           data.error ||
           data.msg ||
           "Something went wrong. Please try again.";
-
         const lowerMsg = msg.toLowerCase();
 
         if (lowerMsg.includes("name")) {
           showFieldError("name", msg);
-        } else if (lowerMsg.includes("email")) {
+        } else if (
+          lowerMsg.includes("email") ||
+          lowerMsg.includes("user already exists")
+        ) {
           showFieldError("email", msg);
         } else if (lowerMsg.includes("password")) {
           showFieldError("password", msg);
-        } else if (
-          lowerMsg.includes("user already exists") ||
-          lowerMsg.includes("email already")
-        ) {
-          showFieldError("email", msg); // ✅ FIXED
         } else {
           setServerError(msg);
         }
       }
     } catch {
-      setServerError(" Please check your connection and try again.");
+      setServerError("Please check your connection and try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -185,5 +185,7 @@ export const useSignup = () => {
     switchsign,
     signin,
     hanndlesignin,
+    isLoading,
+    setIsLoading,
   };
 };
