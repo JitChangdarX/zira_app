@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -1470,6 +1471,7 @@ export default function Todo() {
   const [modal, setModal] = useState(false);
   const [inviteModal, setInviteModal] = useState(false);
   const [orgModal, setOrgModal] = useState(false);
+  const navigate = useNavigate();
   const [toasts, setToasts] = useState([]);
   const [newTask, setNewTask] = useState({
     title: "",
@@ -1586,6 +1588,10 @@ export default function Todo() {
     });
   };
 
+  const createOrgs = () => {
+    navigate("/organization/:id");
+  };
+
   const handleStatusChange = (task, newStatus) => {
     const oldStatus = ["todo", "inprog", "done"].find((s) =>
       tasks[s].find((t) => t.id === task.id),
@@ -1616,32 +1622,7 @@ export default function Todo() {
     setInviteModal(false);
   };
 
-  const createOrg = () => {
-    if (!newOrg.name.trim()) {
-      addToast("Enter organization name", "⚠️", "warn");
-      return;
-    }
-    const colors = ["#3b82f6", "#a855f7", "#14b8a6", "#f59e0b", "#ef4444"];
-    const org = {
-      id: `ORG-00${orgs.length + 1}`,
-      name: newOrg.name,
-      members: 1,
-      projects: 0,
-      plan: "Free",
-      color: colors[Math.floor(Math.random() * colors.length)],
-      avatar: newOrg.name
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase(),
-    };
-    setOrgs((prev) => [...prev, org]);
-    addToast(`"${newOrg.name}" created!`, "🏢", "success");
-    setOrgModal(false);
-    setNewOrg({ name: "", description: "" });
-    setActiveNav("Organizations");
-  };
+  const createOrg = () => {};
 
   const handleLogout = async () => {
     try {
@@ -1977,7 +1958,7 @@ export default function Todo() {
                   </div>
                   <button
                     className="btn btn-primary"
-                    onClick={() => setOrgModal(true)}
+                    onClick={() => createOrgs()}
                   >
                     ＋ New Organization
                   </button>
@@ -2033,7 +2014,7 @@ export default function Todo() {
                   ))}
                   <div
                     className="org-card org-add-card"
-                    onClick={() => setOrgModal(true)}
+                    onClick={() => createOrgs()}
                   >
                     <div className="org-add-inner">
                       <div className="org-add-icon">＋</div>
@@ -2930,7 +2911,7 @@ export default function Todo() {
         ))}
       </div>
 
-      <UnderConstructionToast/>
+      <UnderConstructionToast />
     </>
   );
 }

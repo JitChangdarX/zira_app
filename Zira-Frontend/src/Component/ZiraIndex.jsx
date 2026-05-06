@@ -152,7 +152,7 @@ function Header({ darkMode, setDarkMode }) {
 
   const navigate = useNavigate();
   const Handlesignup = () => {
-    navigate("/signup");
+    navigate("/signin");
   };
 
   useEffect(() => {

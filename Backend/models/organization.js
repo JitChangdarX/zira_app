@@ -14,6 +14,13 @@ const organizationSchema = new Schema(
     description: {
       type: String,
     },
+    members: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     slug: {
       type: String,
       required: true,

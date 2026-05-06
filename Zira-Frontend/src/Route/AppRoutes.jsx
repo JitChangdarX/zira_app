@@ -1,16 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
-
-// ✅ Lazy ONLY pages
 const Organization = lazy(() => import("../Component/Organization"));
 const Todo = lazy(() => import("../Component/Todo"));
 const ZiraIndex = lazy(() => import("../Component/ZiraIndex"));
 const ZiraSignup = lazy(() => import("../Component/ZiraSignup"));
-
+const Signin = lazy(() => import("../Component/Signin"));
 import PublicRoute from "./ProtectRoute/PublicRoute";
 import ProtectedRoute from "./ProtectRoute/ProtectedRoute";
 import BestLoader from "./ProtectRoute/BestLoader";
-import { Signin } from "../Component/Signin";
 
 export const AppRoutes = () => {
   return (
@@ -30,7 +27,7 @@ export const AppRoutes = () => {
         <Route
           path="/organization/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute> 
               <Organization />
             </ProtectedRoute>
           }

@@ -3,6 +3,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import bcrypt from "bcrypt";
 import Owner from "./models/owner.js";
+import checkauthuser from "./middleware/middleware.js";
 import { v4 as uuidv4 } from "uuid";
 import cookieParser from "cookie-parser";
 import { sendInviteMail } from "./mail.js";
@@ -10,6 +11,7 @@ import Organization from "./models/organization.js";
 import dotenv from "dotenv";
 import jwt, { decode } from "jsonwebtoken";
 import owner from "./models/owner.js";
+import { uuid, z } from "zod";
 const app = express();
 dotenv.config();
 app.use(express.json());
@@ -48,9 +50,63 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+const Check_valid_user = z.object({
+  name: z
+    .string()
+    .min(2, {
+      message: "Please provide your name with at least 4 characters",
+    })
+    .max(20, { message: "Maximum 10 characters allowed" }),
+  email: z
+    .string()
+    .email()
+    .refine(
+      (email) => {
+        return /@(gmail\.com|yahoo\.com|outlook\.com)$/.test(email);
+      },
+      {
+        message: "Only Gmail, Yahoo, or Outlook emails are allowed",
+      },
+    ),
+  password: z
+    .string()
+    .min(6, {
+      message: "please provide your password  atleast 6 latter",
+    })
+    .max(15, { message: "atleast 15 charecter allowed" })
+    .regex(/[@#$]/, {
+      message: "Password must include at least one special character (@, #, $)",
+    }),
+});
+
 app.post("/signup-post-user", async (req, res) => {
   try {
     const { user_name, email, frontendHash } = req.body;
+
+    const formadata = {
+      name: user_name,
+      email: email,
+      password: frontendHash,
+    };
+
+    const data = Check_valid_user.safeParse(formadata);
+
+    const newErrors = {};
+
+    if (!data.success) {
+      data.error.issues.forEach((err) => {
+        const field = err.path[0];
+        newErrors[field] = data.error.message;
+      });
+
+      return res.status(401).json({
+        message: "pelase provide a valid crdintial",
+        errors: {
+          newErrors,
+        },
+      });
+    }
 
     if (!user_name) {
       return res.status(400).json({
@@ -86,6 +142,7 @@ app.post("/signup-post-user", async (req, res) => {
     const token = jwt.sign({ id: newUser.uuid }, secret, { expiresIn: "28d" });
     res.status(201).json({
       _k: newUser.uuid,
+      signupAt: newUser.signupAt,
       X_AUTH: token,
     });
   } catch (error) {
@@ -146,13 +203,33 @@ app.post("/quickauthapi/signin", async (req, res) => {
 });
 
 app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
-  const check_user_auth = await Owner.findOne({ uuid: req.user.id });
-  if (!check_user_auth) {
+  const auth_token = req.headers["x-auth"];
+
+  const token_verify = jwt.verify(auth_token, secret);
+
+  // if (!token_verify) {
+  //   res.status(
+  //     (400).json({
+  //       message: "somthing was wrong please check",
+  //     }),
+  //   );
+  // }
+
+  const user_info = await owner.findOne({ uuid: token_verify.id });
+
+  if (!user_info) {
     return res.status(404).json({ message: "User not found" });
   }
 
+
+  if (!auth_token) {
+    return res.status(404).json({ message: "User not found" });
+  }
   res.status(201).json({
-    verify_name: check_user_auth.name,
+    name: user_info.name,
+    verify_name: user_info._id,
+    uuid: user_info.uuid,
+    signup_at: user_info.signupAt,
   });
 });
 
@@ -194,27 +271,17 @@ app.post("/refresh-token", async (req, res) => {
   }
 });
 
-app.post("/api/v1/organizations", async (req, res) => {
+app.post("/api/v1/organizations", checkauthuser, async (req, res) => {
   try {
-    const name = req.headers.name;
-    const slug = req.headers.slug;
-    const description = req.headers.description;
-    const x_auth = req.headers["x-auth-token"];
+    const { name, slug, description } = req.body;
 
-    if (!name || !slug || !x_auth) {
+    if (!name || !slug) {
       return res.status(400).json({
-        message: "name, slug, and token are required",
+        message: "name and slug are required",
       });
     }
 
-    let verify_id;
-    try {
-      verify_id = jwt.verify(x_auth, secret);
-    } catch {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-
-    const user = await Owner.findOne({ uuid: verify_id.id });
+    const user = await Owner.findOne({ uuid: req.user.id });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -313,5 +380,5 @@ app.post("/logout_user", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log("🚀Server running");
+  console.log(`🚀Server running: ${PORT}`);
 });

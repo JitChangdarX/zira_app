@@ -68,12 +68,13 @@ export default function Organization({ user, onCreate }) {
     try {
       const post_data_organization = await axios.post(
         apiurl.crete_oganization,
-        {},
+        {
+          name: orgName,
+          slug: orgUrl,
+          description: description,
+        },
         {
           headers: {
-            name: orgName,
-            slug: orgUrl,
-            description: description,
             "x-auth-token": token,
           },
         },

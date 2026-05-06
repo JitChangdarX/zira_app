@@ -4,7 +4,7 @@ import "../css/zira.css";
 import apiurl from "../../utils/apiurl";
 import axios from "axios";
 import SHA256 from "crypto-js/sha256";
-export const Signin = () => {
+export default function () {
   const navigate = useNavigate();
 
   const [serverError, setServerError] = useState("");
@@ -77,7 +77,7 @@ export const Signin = () => {
 
     setIsLoading(true);
 
-    const frontendHash = SHA256(password).toString();
+    const frontendHash = password;
 
     try {
       const signup_status = await axios.post(
@@ -276,4 +276,4 @@ export const Signin = () => {
       </div>
     </>
   );
-};
+}

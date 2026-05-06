@@ -1,10 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiurl from "../../../utils/apiurl";
-
+import { setUser, removeinfo } from "../../../utils/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 export default function ProtectedRoute({ children }) {
   const [isAuth, setIsAuth] = useState(null);
-
+  const dispatch = useDispatch();
   const token = localStorage.getItem("AUTH-X");
 
   useEffect(() => {
@@ -24,6 +25,15 @@ export default function ProtectedRoute({ children }) {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        dispatch(
+          setUser({
+            auth_id: data.uuid,
+            name: data.name,
+            signup_at: data.signup_at,
+            verify_id: data.verify_name,
+          }),
+        );
         setIsAuth(true);
       } else if (res.status === 401) {
         // try refresh
@@ -34,6 +44,7 @@ export default function ProtectedRoute({ children }) {
 
         if (!refreshRes.ok) {
           localStorage.removeItem("AUTH-X");
+          dispatch(removeinfo());
           setIsAuth(false);
           return;
         }
@@ -44,6 +55,7 @@ export default function ProtectedRoute({ children }) {
         setIsAuth(true);
       } else {
         localStorage.removeItem("AUTH-X");
+        dispatch(removeinfo());
         setIsAuth(false);
       }
     };
@@ -51,7 +63,7 @@ export default function ProtectedRoute({ children }) {
     checkAuth();
   }, [token]);
 
-  if (isAuth === null) return null; // or loader
+  if (isAuth === null) return null;
 
   if (!isAuth) {
     return <Navigate to="/signup" replace />;

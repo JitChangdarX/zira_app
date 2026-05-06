@@ -41,8 +41,6 @@ export default function PublicRoute({ children }) {
 
     checkAuth();
   }, []);
-
-  // ✅ removed loader
   if (status === "loading") {
     return null;
   }

@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../utils/userSlice";
 import { redirect, useNavigate } from "react-router-dom";
 import api from "../../utils/apiurl";
 import SHA256 from "crypto-js/sha256";
@@ -12,6 +14,7 @@ export const useSignup = () => {
   const [serverError, setServerError] = useState("");
   const [signin, checkSignin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
@@ -63,13 +66,11 @@ export const useSignup = () => {
       hasError = true;
     }
 
-    if (hasError) return; // ← validation fails BEFORE loading starts, so no reset needed
-
-    // ✅ Only start loading after validation passes
+    if (hasError) return;
     setIsLoading(true);
 
     try {
-      const frontendHash = SHA256(password).toString();
+      const frontendHash = password;
       const res = await fetch(api.signup_api, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,9 +80,35 @@ export const useSignup = () => {
 
       const data = await res.json();
 
+      if (res.status == 401) {
+        const errors = data.errors.newErrors;
+
+        Object.keys(errors).forEach((key) => {
+          try {
+            const parsed = JSON.parse(errors[key]);
+
+            parsed.forEach((err) => {
+              const field = err.path[0]; // ✅ actual field
+              showFieldError(field, err.message);
+            });
+          } catch (e) {
+            console.error("Parse error:", e);
+          }
+        });
+
+        return;
+      }
       if (res.status === 201) {
         const auth_token = data.X_AUTH;
         localStorage.setItem("AUTH-X", auth_token);
+        dispatch(
+          setUser({
+            userId: data._k,
+            AUTH_X_token_id: auth_token,
+            SignUp_time: data.signupAt,
+          }),
+        );
+
         navigate(`/organization/${data._k}`);
       } else {
         const msg =
