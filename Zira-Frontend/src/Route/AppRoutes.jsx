@@ -5,6 +5,7 @@ const Todo = lazy(() => import("../Component/Todo"));
 const ZiraIndex = lazy(() => import("../Component/ZiraIndex"));
 const ZiraSignup = lazy(() => import("../Component/ZiraSignup"));
 const Signin = lazy(() => import("../Component/Signin"));
+const InvitePage = lazy(() => import("../Component/InvitePage"));
 import PublicRoute from "./ProtectRoute/PublicRoute";
 import ProtectedRoute from "./ProtectRoute/ProtectedRoute";
 import BestLoader from "./ProtectRoute/BestLoader";
@@ -27,7 +28,7 @@ export const AppRoutes = () => {
         <Route
           path="/organization/:id"
           element={
-            <ProtectedRoute> 
+            <ProtectedRoute>
               <Organization />
             </ProtectedRoute>
           }
@@ -41,6 +42,8 @@ export const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/invite/:inviteId/:authToken" element={<InvitePage />} />
 
         <Route path="/signin" element={<Signin />} />
       </Routes>

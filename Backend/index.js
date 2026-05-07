@@ -352,7 +352,7 @@ app.post("/api/send-invite", async (req, res) => {
     });
   }
 
-  const inviteLink = `${process.env.CLIENT_URL}/invite/${find_org_id._id}/auth_token=?=${find_org_id.ownerId}`;
+  const inviteLink = `${process.env.CLIENT_URL}/invite/${find_org_id._id}/auth_token?token=${find_org_id.ownerId}&active_status=true`;
   await sendInviteMail(email, find_org_id.organizationname, inviteLink);
 
   return res.status(200).json({
