@@ -205,15 +205,19 @@ app.post("/quickauthapi/signin", async (req, res) => {
 app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
   const auth_token = req.headers["x-auth"];
 
+  if (!auth_token) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
   const token_verify = jwt.verify(auth_token, secret);
 
-  // if (!token_verify) {
-  //   res.status(
-  //     (400).json({
-  //       message: "somthing was wrong please check",
-  //     }),
-  //   );
-  // }
+  if (!token_verify) {
+    res.status(
+      (400).json({
+        message: "somthing was wrong please check",
+      }),
+    );
+  }
 
   const user_info = await owner.findOne({ uuid: token_verify.id });
 
@@ -221,10 +225,6 @@ app.post("/api/users/fetch-userid", verifyToken, async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-
-  if (!auth_token) {
-    return res.status(404).json({ message: "User not found" });
-  }
   res.status(201).json({
     name: user_info.name,
     verify_name: user_info._id,
@@ -352,7 +352,7 @@ app.post("/api/send-invite", async (req, res) => {
     });
   }
 
-  const inviteLink = `${process.env.CLIENT_URL}/invite/${find_org_id._id}`;
+  const inviteLink = `${process.env.CLIENT_URL}/invite/${find_org_id._id}/auth_token=?=${find_org_id.ownerId}`;
   await sendInviteMail(email, find_org_id.organizationname, inviteLink);
 
   return res.status(200).json({
